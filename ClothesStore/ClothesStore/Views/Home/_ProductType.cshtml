@@ -1,0 +1,10 @@
+﻿
+@model IEnumerable<ClothesStore.Models.ClothingType>
+
+@foreach (var item in Model)
+{
+    var clothingType = item.ClothingTypeName;
+    <li style="list-style-type:none;">
+        <a style="text-decoration:none; color:black;font-weight:500" href="@Url.Action("Index", "Clothes", new {typeName = clothingType})">@item.ClothingTypeName</a>
+    </li>
+}

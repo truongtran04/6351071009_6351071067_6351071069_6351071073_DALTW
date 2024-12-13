@@ -1,0 +1,83 @@
+﻿@model ClothesStore.Models.Image
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Image</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ImageName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ImageName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MainImage)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MainImage)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SecondaryImage1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SecondaryImage1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SecondaryImage2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SecondaryImage2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SecondaryImage3)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SecondaryImage3)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsHidden)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsHidden)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Cloth.ClothesName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Cloth.ClothesName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Color.ColorName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Color.ColorName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ImageID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

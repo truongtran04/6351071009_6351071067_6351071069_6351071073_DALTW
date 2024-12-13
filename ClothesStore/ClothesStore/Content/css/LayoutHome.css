@@ -1,0 +1,90 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.header {
+    max-height: 80px;
+}
+/* icon nam tren 
+*/
+.custom-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+/*  */
+/* img-sub-menu
+*/
+.img-submenu {
+    max-height: 200px;
+}
+/*  */
+/* hover các mục trong sub-menu
+ */
+.navbar-nav .nav-link {
+    padding-bottom: 0; /* Loại bỏ padding mặc định nếu cần */
+}
+
+.custom-nav-item a {
+    color: black; /* Đảm bảo chữ màu đen */
+    text-decoration: none; /* Loại bỏ gạch chân */
+}
+
+    .custom-nav-item a:hover {
+        color: red; /* Chuyển thành màu đỏ khi hover */
+    }
+/*  */
+/* hover các mục chính
+ */
+.text-uppercase.fw-bold {
+    position: relative;
+    text-decoration: none; /* Loại bỏ underline mặc định */
+    color: black;
+}
+
+    .text-uppercase.fw-bold::after {
+        content: '';
+        opacity: 0;
+        height: 4px; /* Độ dày của underline */
+        width: 0; /* Bắt đầu với width = 0, để tăng dần khi hover */
+        background-color: red; /* Màu underline */
+        border-radius: 3px;
+        position: absolute;
+        left: 50%; /* Căn giữa */
+        bottom: -15px; /* Đặt underline ngay dưới chữ */
+        transform: translateX(-50%); /* Dịch chuyển ngược lại 50% width để giữ nó ở giữa */
+    }
+
+    .text-uppercase.fw-bold:hover::after {
+        opacity: 1;
+        width: 35px; /* Khi hover, tăng width lên toàn bộ chiều rộng của liên kết */
+    }
+/*  */
+/* hover sub-menu
+ */
+.sub-menu {
+    display: none; /* Ẩn sub-menu theo mặc định */
+    position: absolute; /* Đặt vị trí của sub-menu */
+    z-index: 1000; /* Đảm bảo sub-menu nằm trên các phần tử khác */
+}
+.sub-menu.show {
+    display: block; /* Hiển thị sub-menu khi có class show */
+}
+
+
+/* Set the initial display of sizes div to hidden */
+.toggle-div {
+    display: none;
+}
+/* Add transition effects */
+.hover-overlay {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-body:hover .hover-overlay {
+    opacity: 1;
+}

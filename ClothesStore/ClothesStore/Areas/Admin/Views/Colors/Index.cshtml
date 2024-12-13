@@ -1,0 +1,74 @@
+﻿@model IEnumerable<ClothesStore.Models.Color>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Màu sắc";
+    ViewBag.FucLabel = "Thông tin màu sắc";
+}
+
+@section header{
+    <!-- Datatable -->
+    <link href="~/Public/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+}
+@section footer{
+    <!-- Datatable -->
+    <script src="~/Public/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Public/js/plugins-init/datatables.init.js"></script>
+}
+
+<section class="content">
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h3 class="card-title">
+                        <strong>@ViewBag.FucLabel</strong>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                <a href="@Url.Action("Create", "Colors")" class="btn btn-success">
+                    Thêm mới
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="example" class="display p-0" style="min-width: 845px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">.#</th>
+                            <th style="width: 60px">Hình ảnh</th>
+                            <th>Tên màu sắc</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td></td>
+                                <td style="height: 20px">
+                                    <img src="@item.UrlImage" alt="Alternate Text" class="img-fluid" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ColorName)
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("Edit", "Colors", new { id = item.ColorID })" class="btn btn-success">Sửa</a>
+                                    <a href="@Url.Action("Details", "Colors", new { id = item.ColorID })" class="btn btn-primary">Xem</a>
+                                    <a href="@Url.Action("Delete", "Colors", new { id = item.ColorID })" class="btn btn-danger">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+
+        </div>
+    </div>
+</section>
+

@@ -1,0 +1,92 @@
+﻿@using System.Globalization
+@using ClothesStore.Models
+
+@model IEnumerable<ClothesStore.Models.Order>
+
+@{
+    ViewBag.Title = "Quản lý đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Đơn hàng";
+    ViewBag.FucLabel = "Quản lý đơn hàng";
+}
+
+@section header{
+    <!-- Datatable -->
+    <link href="~/Public/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+}
+@section footer{
+    <!-- Datatable -->
+    <script src="~/Public/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Public/js/plugins-init/datatables.init.js"></script>
+}
+
+<section class="content">
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h3 class="card-title">
+                        <strong>@ViewBag.FucLabel</strong>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="example" class="display p-0" style="min-width: 845px;">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 130px">Mã đơn hàng</th>
+                            <th>Khách hàng</th>
+                            <th>Tổng tiền</th>
+                            <th style="width: 180px">Ngày</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="text-center">@order.OrderID</td>
+                                <td>@order.User.Profiles.First().FullName</td> <!-- Lấy Username từ User -->
+                                <td>
+                                    @order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN")) <!-- Định dạng tiền VND -->
+                                </td>
+                                <td>@order.CreatedAt</td>
+                                <form method="post" action="@Url.Action("UpdateStatus", "OrderManagement", new { area = "Admin" })">
+                                    <td>
+                                        <input type="hidden" name="orderId" value="@order.OrderID" />
+                                        <div class="form-group">
+                                            <select name="status" class="form-control custom-select" style="max-width: 200px;">
+                                                @foreach (var status in (IEnumerable<OrderStatus>)ViewBag.OrderStatuses)
+                                                {
+                                                    <option value="@status.ToString()" @(order.Status == status.ToString() ? "selected" : "")>
+                                                        @status
+                                                    </option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="submit" class="btn btn-success mt-2">Lưu</button>
+                                        <a href="@Url.Action("OrderDetails", "OrderManagement", new { id = order.OrderID })" class="btn btn-primary mt-2">
+                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                            <span class="ml-1">Xem</span>
+                                        </a>
+                                    </td>
+                                </form>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+
+        </div>
+    </div>
+</section>

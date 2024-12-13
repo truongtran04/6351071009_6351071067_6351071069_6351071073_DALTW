@@ -1,0 +1,68 @@
+﻿﻿@using ClothesStore.Models
+
+<div id="cart-section" style="height:95%">
+    @if (Session["CartDetails"] != null)
+    {
+        var cartDetails = (List<CartDetail>)Session["CartDetails"];
+        if (cartDetails.Count > 0)
+        {
+            var sortedCartDetails = cartDetails.OrderByDescending(c => c.ClothesID).ToList();
+
+            <ul class="list-group" style="height:85%; overflow:auto">
+                @foreach (var item in sortedCartDetails)
+                {
+                    var uniqueId = $"{item.ClothesID}_{item.ColorID}_{item.SizeName}";
+                    <li id="row_@uniqueId" class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="row">
+                            <!-- Hiển thị sản phẩm -->
+                            <div class="col-3">
+                                <a href="@Url.Action("Index", "ClothesDetail", new { id = item.ClothesID })">
+                                    <img src="@item.MainImage" alt="@item.ClothesName" style="width: 100%; height: 100px;" class="me-2" />
+                                </a>
+                            </div>
+                            <div class="col-5 position-relative">
+                                <a href="@Url.Action("Index", "ClothesDetail", new { id = item.ClothesID })" style="text-decoration:none; color:black">
+                                    <div>@item.ClothesName</div>
+                                </a>
+                                <div>
+                                    <img src="@item.MainImage" alt="@item.ColorID" style="width: 20px; height: 20px; border-radius: 50%;">
+                                    <span>@item.ColorID</span> |
+                                    <span>@item.SizeName</span>
+                                </div>
+                                <span class="price position-absolute bottom-0">@item.Price.ToString("N0") ₫</span><br />
+                            </div>
+                            <div class="col-4 d-flex flex-column justify-content-between align-items-end">
+                                <form action="@Url.Action("RemoveFromCart", "Cart")" method="post">
+                                    <input type="hidden" name="uniqueId" value="@uniqueId" />
+                                    <button class="btn btn-danger btn-sm remove-item" data-unique-id="@uniqueId">
+                                        Xóa
+                                    </button>
+                                </form>
+                                <div class="d-flex align-items-center">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm update-quantity" data-unique-id="@uniqueId" data-change="-1">-</button>
+                                    <input type="number" id="quantity_@uniqueId" value="@item.Quantity" class="form-control" style="border-radius: 0; border-color: #EDF1F5; font-size:10px" readonly />
+                                    <button type="button" class="btn btn-outline-secondary btn-sm update-quantity" data-unique-id="@uniqueId" data-change="1">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+            <div class="mt-3 position-relative" style="height:13%">
+                <div class="d-flex justify-content-between">
+                    <span>Số lượng: <span id="totalQuantity">@cartDetails.Sum(c => c.Quantity)</span></span>
+                    <span>Tổng tiền: <span id="totalCartPrice">@cartDetails.Sum(c => c.Price * c.Quantity).ToString("N0") ₫</span></span>
+                </div>
+                <a href="@Url.Action("Index", "Orders")" class="btn btn-success mt-3 w-100 position-absolute bottom-0" style="padding:10px">Thanh toán</a>
+            </div>
+        }
+        else
+        {
+            <p>Chưa có sản phẩm nào trong giỏ hàng.</p>
+        }
+    }
+    else
+    {
+        <p>Chưa có sản phẩm nào trong giỏ hàng.</p>
+    }
+</div>

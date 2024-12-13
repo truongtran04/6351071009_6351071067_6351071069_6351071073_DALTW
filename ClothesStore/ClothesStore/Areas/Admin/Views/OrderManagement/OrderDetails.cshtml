@@ -1,0 +1,88 @@
+﻿@model ClothesStore.Models.OrderDetailViewModel
+@using System.Globalization
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Đơn hàng";
+    ViewBag.FucLabel = "Chi tiết đơn hàng";
+}
+<section class="content">
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h3 class="card-title">
+                        <strong>@ViewBag.FucLabel</strong>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                <a href="@Url.Action("Index", "OrderManagement")" class="btn btn-primary">
+                    Quay lại
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row m-1">
+                <div class="col-md-6">
+                    <p><strong>Tên khách hàng:</strong> @Model.FullName</p>
+                    <p><strong>Số điện thoại:</strong> @Model.PhoneNumber</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Ngày đặt hàng:</strong> @Model.OrderDate.ToString("dd/MM/yyyy")</p>
+                    <p><strong>Địa chỉ giao hàng:</strong> @Model.Address</p>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-responsive-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 100px">Hình ảnh</th>
+                                            <th>Tên quần áo</th>
+                                            <th>Kích cỡ</th>
+                                            <th>Giá</th>
+                                            <th>Số lượng</th>
+                                            <th>Thành tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.OrderDetails)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <img src="@item.MainImage" class="img-fluid rounded" />
+                                                </td>
+                                                <td>@item.ClothesName</td>
+                                                <td>@item.SizeName</td>
+                                                <td>@item.Price đ</td>
+                                                <td>@item.Quantity</td>
+                                                <td>
+                                                    @(Convert.ToDecimal(item.Price) * Convert.ToInt32(item.Quantity)) đ
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-4">
+                    <p class="h3"><strong>Tổng đơn hàng:</strong> <span class="text-success">@Model.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+
+        </div>
+    </div>
+</section>
+

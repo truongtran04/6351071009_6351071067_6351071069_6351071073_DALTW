@@ -1,0 +1,97 @@
+﻿@model IEnumerable<ClothesStore.Models.Cloth>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Quần áo";
+    ViewBag.FucLabel = "Thông tin quần áo";
+}
+
+@section header{
+    <!-- Datatable -->
+    <link href="~/Public/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+}
+@section footer{
+    <!-- Datatable -->
+    <script src="~/Public/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Public/js/plugins-init/datatables.init.js"></script>
+}
+
+<section class="content">
+    @Html.Partial("_Messages")
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h3 class="card-title">
+                        <strong>@ViewBag.FucLabel</strong>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                <a href="@Url.Action("Index", "Clothes")" class="btn btn-primary mr-2">
+                    <span class="ml-1">Quay lại</span>
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="example" class="display p-0" style="min-width: 845px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">.#</th>
+                            <th style="width: 60px">Hình ảnh</th>
+                            <th>Tên quần áo</th>
+                            <th style="width: 80px">Giá</th>
+                            <th style="width: 80px">Danh mục</th>
+                            <th style="width: 100px">Ngày tạo</th>
+                            <th style="width: 280px">Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td></td>
+                                <td class="text-center">
+
+                                    <img src="@item.UrlImage" class="img-fluid" style="width: 50px" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ClothesName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Price)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Category.CategoryName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-danger disabled"><i class="fa fa-toggle-off" aria-hidden="true"></i></a>
+                                    <a href="@Url.Action("Edit", "Clothes", new { id = item.ClothesID })" class="btn btn-success disabled">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                        <span>Sửa</span>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Clothes", new { id = item.ClothesID })" class="btn btn-danger disabled">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                        <span class="ml-1">Xóa</span>
+                                    </a>
+                                    <a href="@Url.Action("Details", "Clothes", new { id = item.ClothesID })" class="btn btn-primary">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                        <span class="ml-1">Xem</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+
+        </div>
+    </div>
+</section>

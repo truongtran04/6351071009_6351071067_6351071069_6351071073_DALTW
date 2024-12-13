@@ -1,0 +1,467 @@
+﻿@{
+    var userId = Session["UserId"] != null ? Session["UserId"].ToString() : string.Empty;
+}
+@model ClothesStore.Models.Cloth
+@using System.Globalization
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+<style>
+    .btn.selected {
+        border: 2px solid #007bff; /* Màu xanh của Bootstrap */
+        background-color: #e9ecef; /* Màu nền sáng hơn */
+    }
+
+    /* CSS để ẩn phần nội dung ban đầu */
+    .toggle-content {
+        display: none;
+    }
+
+    /* CSS cho icon toggle */
+    .toggle-title {
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+</style>
+<script>
+    function changeImageAndSizes(colorInput, clothesId) {
+        // Cập nhật ảnh chính dựa trên màu đã chọn
+        const newImageSrc = colorInput.getAttribute('data-img-url');
+        document.getElementById('mainImage_' + clothesId).src = newImageSrc;
+
+        // Lấy ID màu được chọn từ input hiện tại
+        const selectedColor = colorInput.getAttribute('data-color-id');
+
+        // Nhắm mục tiêu container chứa các size cho sản phẩm hiện tại
+        const sizeContainer = document.getElementById('sizeContainer_' + clothesId);
+
+        // Duyệt qua từng tùy chọn size và chỉ hiển thị các size phù hợp với màu đã chọn
+        Array.from(sizeContainer.getElementsByClassName('size-option')).forEach(function (sizeDiv) {
+            if (sizeDiv.getAttribute('data-color') === selectedColor) {
+                sizeDiv.style.display = 'block';  // Hiển thị size phù hợp
+            } else {
+                sizeDiv.style.display = 'none';   // Ẩn các size không phù hợp
+            }
+        });
+    }
+
+    // Function to toggle display for the size options
+    function toggleDiv(element) {
+        const insertDiv = element.closest('.card-body').querySelector('.insert');
+        const sizesDiv = element.closest('.card-body').querySelector('.sizes');
+        // Hide insert div and show sizes div
+        insertDiv.style.display = 'none';
+        sizesDiv.style.display = 'block';
+    }
+
+    // Hide sizes and show insert div when mouse leaves
+    function hideSizes(element) {
+        const insertDiv = element.querySelector('.insert');
+        const sizesDiv = element.querySelector('.sizes');
+        sizesDiv.style.display = 'none';
+        insertDiv.style.display = 'block';
+    }
+</script>
+
+<div class="container mt-3" style="margin-top: 150px">
+    <div style="height: 10px;"></div>
+    <div class="container-fluid mt-2">
+        <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '|';">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" style="text-decoration: none; color: black">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("GetClothesByCate", "Clothes", new { categoryId = Model.CategoryID})" style="text-decoration: none; color: black">@Model.Category.CategoryName</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("GetClothesByType", "Clothes", new { idCate = Model.CategoryID,  idType = Model.ClothingTypeID })" style="text-decoration: none; color: black">@Model.ClothingType.ClothingTypeName</a></li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: black">@Model.ClothesName</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="col-md-9">
+                        <img id="mainImage" class="img-fluid rounded me-3" src="@Model.UrlImage" alt="Product Image">
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex flex-column me-3">
+                            <div class="thumbnail-container" style="overflow: auto; height: 500px;">
+                                @foreach (var image in ViewBag.Images)
+                                {
+                                    if (image.ClothesID == Model.ClothesID)
+                                    {
+                                        <img src="@image.UrlMainImg"
+                                             alt="Main Thumbnail"
+                                             class="img-thumbnail mb-2"
+                                             style="width: 80px; cursor: pointer;"
+                                             onerror="this.style.display='none';"
+                                             onclick="document.getElementById('mainImage').src='@image.UrlMainImg'" />
+                                        if (!string.IsNullOrEmpty(image.UrlSecondaryImage1))
+                                        {
+                                            <img src="@image.UrlSecondaryImage1"
+                                                 alt="Secondary Thumbnail 1"
+                                                 class="img-thumbnail mb-2"
+                                                 style="width: 80px; cursor: pointer;"
+                                                 onerror="this.style.display='none';"
+                                                 onclick="document.getElementById('mainImage').src='@image.UrlSecondaryImage1'" />
+                                        }
+                                        if (!string.IsNullOrEmpty(image.UrlSecondaryImage2))
+                                        {
+                                            <img src="@image.UrlSecondaryImage2"
+                                                 alt="Secondary Thumbnail 2"
+                                                 class="img-thumbnail mb-2"
+                                                 style="width: 80px; cursor: pointer;"
+                                                 onerror="this.style.display='none';"
+                                                 onclick="document.getElementById('mainImage').src='@image.UrlSecondaryImage2'" />
+                                        }
+                                        if (!string.IsNullOrEmpty(image.UrlSecondaryImage3))
+                                        {
+                                            <img src="@image.UrlSecondaryImage3"
+                                                 alt="Secondary Thumbnail 3"
+                                                 class="img-thumbnail mb-2"
+                                                 style="width: 80px; cursor: pointer;"
+                                                 onerror="this.style.display='none';"
+                                                 onclick="document.getElementById('mainImage').src='@image.UrlSecondaryImage3'" />
+                                        }
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <h4>@Model.ClothesName</h4>
+                <p class="mt-1"><strong>@Model.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</strong></p>
+
+                <!-- Hiển thị màu sắc -->
+                <div class="mt-4">
+                    <div class="me-2"><strong>Màu sắc:</strong></div>
+                    <div class="d-flex">
+                        @foreach (var image in ViewBag.Images)
+                        {
+                            if (image.ClothesID == Model.ClothesID)
+                            {
+                                foreach (var color in ViewBag.Colors)
+                                {
+                                    if (color.ColorID == image.ColorID)
+                                    {
+                                        <div class="me-2">
+                                            <input type="radio" class="btn-check" name="color_@Model.ClothesID" id="@color.ColorID" autocomplete="off"
+                                                   onclick="updateMainImage(this)" data-color-id="@color.ColorID" data-img-url="@image.UrlMainImg" @(image.ImageOrder == 1 ? "checked" : "")>
+                                            <label class="btn rounded-circle d-flex justify-content-center align-items-center" for="@color.ColorID" style="width: 20px; height: 25px; text-align: center;">
+                                                <img src="@color.UrlImage" alt="" class="rounded-circle" style="width: 20px; height: 20px;">
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+                    
+                </div>
+
+
+                <!-- Hiển thị size -->
+                <div class="mt-3" id="sizeOptions">
+                    <div><strong>Kích thước: </strong></div>
+                    <div class="d-flex flex-wrap">
+                        @foreach (var quantity in ViewBag.Quantity)
+                        {
+                            if (quantity.ClothesID == Model.ClothesID)
+                            {
+                                foreach (var size in ViewBag.Sizes)
+                                {
+                                    if (size.SizeID == quantity.SizeID)
+                                    {
+                                        <div class="">
+                                            <div class="btn bg-white m-2 @quantity.ColorID" style="display: none; cursor: pointer;" onclick="selectSize(this)">@size.SizeName</div>
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+
+                </div>
+                <form action="@Url.Action("AddToCart", "Cart")" method="post" onsubmit="return validateForm()" style="margin-top:30px" class="addtocart">
+                    <input type="hidden" name="clothesId" value="@Model.ClothesID" />
+                    <input type="hidden" name="clothesName" value="@Model.ClothesName" />
+                    <input type="hidden" name="price" value="@Model.Price" />
+                    <input type="hidden" name="mainImage" id="mainImageHidden" value="@Model.UrlImage" />
+                    <input type="hidden" name="userId" value="@userId" />
+
+                    <input type="hidden" name="size" id="selectedSize" />
+                    <input type="hidden" name="color" id="selectedColor" />
+                    <button type="submit" class="btn btn-danger mt-3" style="width:100%; height:50px; font-size:20px;" onclick="setSelectedValues();">Thêm vào giỏ hàng</button>
+                </form>
+                <!-- Thêm vào phần mô tả với toggle ẩn/hiện -->
+                <div class="accordion mt-5" id="accordionExample">
+                    <div class="accordion-item bg-light">
+                        <h2 class="accordion-header border-top border-bottom" id="headingOne">
+                            <button class="accordion-button collapsed px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Mô tả sản phẩm
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne">
+                            <div class="accordion-body px-0">
+                                @Model.Description
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-light">
+                        <h2 class="accordion-header border-top border-bottom" id="headingTwo">
+                            <button class="accordion-button collapsed px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                                Chất liệu
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo">
+                            <div class="accordion-body px-0">
+                                @Model.Fabric
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item bg-light">
+                        <h2 class="accordion-header border-top border-bottom" id="headingThree">
+                            <button class="accordion-button collapsed px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                                Hướng dẫn sử dụng
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
+                            <div class="accordion-body px-0">
+                                @Model.UserInstructions
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*<form action="@Url.Action("AddToCart", "Cart")" method="post" onsubmit="return validateForm()">
+                        <input type="hidden" name="clothesId" value="@Model.ClothesID" />
+                        <input type="hidden" name="clothesName" value="@Model.ClothesName" />
+                        <input type="hidden" name="price" value="@Model.Price" />
+                        <input type="hidden" name="mainImage" id="mainImageHidden" value="@Model.UrlImage" />
+                        <input type="hidden" name="userId" value="@userId" />
+
+                        <input type="hidden" name="size" id="selectedSize" />
+                        <input type="hidden" name="color" id="selectedColor" />
+                        <button type="submit" class="btn btn-primary mt-3" onclick="setSelectedValues();">Thêm vào giỏ hàng</button>
+                    </form>*@
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid mt-5" style="margin-top: 200px">
+        <div class="fw-bold h5">Gợi ý mua cùng</div>
+        <div class="d-flex overflow-hidden" id="goiysanpham">
+            @foreach (var item in ViewBag.Clothes)
+            {
+                <div class="col-3 m-3">
+                    <form action="@Url.Action("AddToCart", "Cart")" method="post" class="addtocart">
+                        <div class="card border-0 d-flex flex-column-reverse">
+                            <div class="card-footer border-0 p-0">
+                                <div class="d-flex flex-row mt-3 mb-2">
+                                    @foreach (var color in item.Colors)
+                                    {
+                                        var specificImages = (List<ClothesStore.Models.Image>)item.Images;
+                                        var imgUrl = specificImages.FirstOrDefault(img => img.ColorID == color.ColorID)?.UrlMainImg;
+                                        var imageWithOrderOne = specificImages.FirstOrDefault(img => img.ColorID == color.ColorID && img.ImageOrder == 1);
+                                        <div class="me-2">
+                                            <input type="radio"
+                                                   class="btn-check"
+                                                   name="color_@item.ClothesItem.ClothesID"
+                                                   id="color_@item.ClothesItem.ClothesID-@color.ColorID"
+                                                   autocomplete="off"
+                                                   onclick="changeImageAndSizes(this, '@item.ClothesItem.ClothesID')"
+                                                   data-color-id="@color.ColorID"
+                                                   data-img-url="@imgUrl"
+                                                   @(imageWithOrderOne != null ? "checked" : "")>
+                                            <label class="btn rounded-circle d-flex justify-content-center align-items-center"
+                                                   for="color_@item.ClothesItem.ClothesID-@color.ColorID"
+                                                   style="width: 20px; height: 25px;">
+                                                <img src="@color.UrlImage"
+                                                     alt=""
+                                                     class="rounded-circle"
+                                                     style="width: 20px; height: 20px;">
+                                            </label>
+                                        </div>
+
+                                    }
+                                </div>
+                                <div class="mb-2">
+                                    <a class="@Url.Action("Index", "ClothesDetail", new { id = item.ClothesItem.ClothesID })" href="#" style="text-decoration:none">
+                                        <p class="card-text" style="color:black">@item.ClothesItem.ClothesName</p>
+                                    </a>
+                                </div>
+                                <div class="mb-2">
+                                    <span><strong>@item.ClothesItem.Price đ</strong></span>
+                                </div>
+                            </div>
+                            <div class="card-body p-0 position-relative" onmouseleave="hideSizes(this)">
+                                @*Main image*@
+                                <a href="@Url.Action("Index", "ClothesDetail", new { id = item.ClothesItem.ClothesID })">
+                                    <img id="mainImage_@item.ClothesItem.ClothesID" class="mainImage img-fluid rounded" src="@item.ClothesItem.UrlImage" alt="Product Image" onmouseenter="showInsert(this)">
+                                </a>
+                                @*Hidden inputs for product data*@
+                                <input type="hidden" name="clothesId" value="@item.ClothesItem.ClothesID">
+                                <input type="hidden" name="clothesName" value="@item.ClothesItem.ClothesName">
+                                <input type="hidden" name="mainImage" value="@item.ClothesItem.UrlImage">
+                                <input type="hidden" name="price" value="@item.ClothesItem.Price">
+
+                                @*Insert div*@
+                                <div class="insert bg-light text-center p-2 position-absolute bottom-0 start-50 translate-middle-x mb-3 rounded btn btn-light border-0 hover-overlay" style="width: 90%;" onclick="toggleDiv(this)">
+                                    Thêm vào giỏ hàng
+                                </div>
+                                @*Sizes div*@
+                                <div class="sizes bg-light text-center p-2 position-absolute bottom-0 start-50 translate-middle-x mb-3 rounded toggle-div" style="width: 90%; display: none;">
+                                    Thêm vào giỏ hàng
+                                    <div class="d-flex flex-row justify-content-center" id="sizeContainer_@item.ClothesItem.ClothesID">
+                                        <div class="col-9 d-flex flex-wrap">
+                                            @foreach (var size in item.Sizes)
+                                            {
+                                                var specificImages = (List<ClothesStore.Models.Clothes_Color_Size>)item.Clothes_Color_Sizes;
+                                                var colorID = specificImages.FirstOrDefault(clo => clo.SizeID == size.SizeID)?.ColorID;
+                                                <div class="btn bg-white size-option p-0"
+                                                     style="margin-left:5px; margin-top:5px; width:40px; height:40px; display:flex; justify-content:center; align-items:center;"
+                                                     data-color="@colorID">
+                                                    <input type="radio" class="btn-check" name="size" id="size_@item.ClothesItem.ClothesID-@size.SizeID" value="@size.SizeName" autocomplete="off">
+                                                    <label class="btn btn-outline-primary m-0 p-0 d-flex justify-content-center align-items-center"
+                                                           style="width:100%; height:100%; white-space:nowrap;"
+                                                           for="size_@item.ClothesItem.ClothesID-@size.SizeID">
+                                                        @size.SizeName
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary p-0 col-3" style="width:50px; margin:8px 0"><i class="bi bi-cart"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section footer {
+    <script>
+        var isLoggedIn = @((Session["UserId"] != null) ? "true" : "false");
+
+        function toggleContent(id) {
+            var content = document.getElementById(id);
+            var icon = document.getElementById(id + 'Icon');
+            if (content.style.display === "none" || content.style.display === "") {
+                content.style.display = "block";
+                icon.innerText = "-"; // Chuyển đổi thành -
+            } else {
+                content.style.display = "none";
+                icon.innerText = "+"; // Chuyển đổi về +
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            displayFirstColorSizes(); // Gọi hàm để hiển thị size cho màu đầu tiên
+        });
+
+        function selectSize(sizeDiv) {
+            var sizeButtons = document.querySelectorAll('#sizeOptions .btn');
+            sizeButtons.forEach(function (btn) {
+                btn.classList.remove('selected'); // Xóa trạng thái 'selected' khỏi các nút size khác
+            });
+
+            sizeDiv.classList.add('selected'); // Đánh dấu nút kích thước đã chọn
+            document.getElementById('selectedSize').value = sizeDiv.innerText; // Lưu giá trị kích thước vào trường ẩn
+        }
+
+
+        function setSelectedValues() {
+            // Lấy màu sắc đã chọn
+            var selectedColor = document.querySelector('input[name^="color_"]:checked');
+            if (selectedColor) {
+                document.getElementById('selectedColor').value = selectedColor.getAttribute('data-color-id');
+            }
+
+            // Lấy kích thước đã chọn
+            var selectedSize = document.querySelector('#sizeOptions .selected');
+            if (selectedSize) {
+                document.getElementById('selectedSize').value = selectedSize.innerText; // Lấy tên kích thước
+            }
+            // Cập nhật URL hình ảnh vào trường ẩn
+            var mainImageUrl = document.getElementById('mainImage').src;
+            document.getElementById('mainImageHidden').value = mainImageUrl;
+        }
+
+        function validateForm() {
+            var selectedSize = document.getElementById('selectedSize').value;
+            var selectedColor = document.getElementById('selectedColor').value;
+            if (!selectedSize || !selectedColor) {
+                showAlert("Vui lòng chọn màu sắc và kích thước trước khi thêm vào giỏ hàng.");
+                return false;
+            }
+
+            if (isLoggedIn) {
+                showSuccessMessage();
+            } else {
+                showAlert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.");
+            }
+
+            return true;
+        }
+
+
+        function updateMainImage(colorInput) {
+            var imageUrl = colorInput.getAttribute('data-img-url');
+            document.getElementById('mainImage').src = imageUrl;
+
+            // Cập nhật giá trị ColorID của màu đã chọn vào trường ẩn
+            document.getElementById('selectedColor').value = colorInput.getAttribute('data-color-id');
+
+            // Hiển thị các size tương ứng với màu đã chọn
+            updateSizes(colorInput);
+        }
+
+
+        function updateSizes(colorInput) {
+            var colorId = colorInput.getAttribute('data-color-id');
+            var sizeButtons = document.querySelectorAll('#sizeOptions .btn');
+
+            sizeButtons.forEach(function (btn) {
+                // Kiểm tra nếu kích thước tương ứng với màu đã chọn
+                if (btn.classList.contains(colorId)) {
+                    btn.style.display = 'block'; // Hiện kích thước
+                } else {
+                    btn.style.display = 'none'; // Ẩn kích thước
+                }
+            });
+        }
+
+        function displayFirstColorSizes() {
+            var firstColorInput = document.querySelector('input[name^="color_"]'); // Lấy màu đầu tiên
+            if (firstColorInput) {
+                firstColorInput.checked = true; // Đặt là đã chọn
+                updateMainImage(firstColorInput); // Cập nhật ảnh chính
+                updateSizes(firstColorInput); // Hiển thị size tương ứng
+            }
+        }
+        $(document).ready(function () {
+            $('#goiysanpham').slick({
+                slidesToShow: 4,
+                slidesToScroll: 1,
+                draggable: true,
+                infinite: true,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                swipeToSlide: true,
+                speed: 600, // Tốc độ chuyển đổi giữa các slide (ms)
+                touchThreshold: 10 // Tăng độ nhạy khi kéo hoặc vuốt
+            });
+        });
+    </script>
+}
+

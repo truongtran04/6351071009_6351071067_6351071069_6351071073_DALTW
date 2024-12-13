@@ -1,0 +1,92 @@
+﻿@model ClothesStore.Models.OrderDetailViewModel
+@using System.Globalization
+@{
+    ViewBag.Title = "Thông tin đơn hàng";
+    Layout = "~/Views/Shared/_OrdersNavbar.cshtml";
+}
+
+<div class="container my-5" style="padding-top:50px;">
+    <h1 class="display-4 text-center mb-4">Chi tiết đơn hàng</h1>
+
+    <!-- Thông tin đơn hàng -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <p><strong>Mã đơn hàng:</strong> <span class="text-primary">@Model.OrderId</span></p>
+            <p>
+                <strong>Trạng thái đơn hàng:</strong>
+                <span class="badge @ViewBag.OrderBadgeClass">
+                    @Model.OrderStatus.ToString().Replace("_", " ")
+                </span>
+            </p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Tên khách hàng:</strong> @Model.FullName</p>
+            <p><strong>Số điện thoại:</strong> @Model.PhoneNumber</p>
+            <p><strong>Địa chỉ giao hàng:</strong> @Model.Address</p>
+            <p><strong>Tổng đơn hàng:</strong> <span class="text-success">@Model.TotalAmount.ToString("N0") ₫</span></p>
+        </div>
+    </div>
+
+    <!-- Sản phẩm trong đơn hàng -->
+    <div class="container-fluid bg-light p-4 rounded shadow-sm">
+        <h3 class="mb-4">Danh sách sản phẩm trong đơn hàng</h3>
+        @if (Model.OrderDetails != null && Model.OrderDetails.Count > 0)
+        {
+            <div class="row">
+                @foreach (var item in Model.OrderDetails)
+                {
+                    var uniqueId = $"{item.ClothesID}_{item.ColorID}_{item.SizeName}";
+                    <div class="col-3 mt-3 mb-3">
+                        <div class="card border-0 shadow-sm border-light rounded">
+                            <div class="card-body p-0">
+                                <img src="@item.MainImage" class="img-fluid rounded" />
+                            </div>
+                            <div class="card-footer border-0 p-0">
+                                <div class="mt-2 ms-2">
+                                    <h5 class="card-title">@item.ClothesName</h5>
+                                    <p><strong>Kích cỡ:</strong> @item.SizeName</p>
+                                    <p><strong>Số lượng:</strong> @item.Quantity</p>
+                                    <p><strong>Giá:</strong> <span class="text-danger">@item.Price ₫</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-center">Không có sản phẩm trong đơn hàng này.</p>
+        }
+    </div>
+</div>
+
+
+<!-- Custom CSS for better styling -->
+<style>
+    .badge {
+        font-size: 0.9rem;
+        padding: 5px 15px;
+    }
+
+    .text-primary {
+        color: #007bff !important;
+    }
+
+    .text-success {
+        color: #28a745 !important;
+    }
+
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    .card-img-top {
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+</style>

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ClothesStore.Models.ClothingStyle>
+
+@{
+    var all = Model.FirstOrDefault(); // Get the first item or null if the model is empty
+}
+
+@if (all != null) // Check if item is not null
+{
+    <div class="col-3">
+        <div class="card border-0 me-3">
+            <div class="card-body p-0">
+                <!-- Update link to call an AJAX function -->
+                <a href="@Url.Action("GetClothesByClothingType", "Clothes", new { id = all.ClothingTypeID })">
+                    <img src="~/Content/images/8tp24c001-sg498-thumb.png" alt="Tất cả" class="img-fluid" />
+                </a>
+            </div>
+            <div class="footer text-center">
+                <p>Tất cả</p>
+            </div>
+        </div>
+    </div>
+}
+
+@foreach (var item in Model)
+{
+    <div class="col-3">
+        <div class="card border-0 me-3">
+            <div class="card-body p-0">
+                <!-- Update link to call an AJAX function -->
+                <a href="@Url.Action("GetClothesByStyle", "Clothes", new { id = all.ClothingTypeID })">
+                    <img src="~/Content/images/8tp24c001-sg498-thumb.png" alt="@item.ClothingStyleName" class="img-fluid" />
+                </a>
+            </div>
+            <div class="footer text-center">
+                <p>@item.ClothingStyleName</p>
+            </div>
+        </div>
+    </div>
+}

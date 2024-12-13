@@ -1,0 +1,137 @@
+﻿@model IEnumerable<ClothesStore.Models.ViewModels.ClothesViewModel>
+@using System.Globalization
+@section header{
+    <style>
+        /* Set the initial display of sizes div to hidden */
+        .toggle-div {
+            display: none;
+        }
+        /* Add transition effects */
+        .hover-overlay {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card-body:hover .hover-overlay {
+            opacity: 1;
+        }
+    </style>
+}
+@section footer{
+    <script>
+        function changeImageAndSizes(colorInput, clothesId) {
+            // Cập nhật ảnh chính dựa trên màu đã chọn
+            const newImageSrc = colorInput.getAttribute('data-img-url');
+            document.getElementById('mainImage_' + clothesId).src = newImageSrc;
+
+            // Lấy ID màu được chọn từ input hiện tại
+            const selectedColor = colorInput.getAttribute('data-color-id');
+
+            // Nhắm mục tiêu container chứa các size cho sản phẩm hiện tại
+            const sizeContainer = document.getElementById('sizeContainer_' + clothesId);
+
+            // Duyệt qua từng tùy chọn size và chỉ hiển thị các size phù hợp với màu đã chọn
+            Array.from(sizeContainer.getElementsByClassName('size-option')).forEach(function (sizeDiv) {
+                if (sizeDiv.getAttribute('data-color') === selectedColor) {
+                    sizeDiv.style.display = 'block';  // Hiển thị size phù hợp
+                } else {
+                    sizeDiv.style.display = 'none';   // Ẩn các size không phù hợp
+                }
+            });
+        }
+
+        // Function to toggle display for the size options
+        function toggleDiv(element) {
+            const insertDiv = element.closest('.card-body').querySelector('.insert');
+            const sizesDiv = element.closest('.card-body').querySelector('.sizes');
+            // Hide insert div and show sizes div
+            insertDiv.style.display = 'none';
+            sizesDiv.style.display = 'block';
+        }
+
+        // Hide sizes and show insert div when mouse leaves
+        function hideSizes(element) {
+            const insertDiv = element.querySelector('.insert');
+            const sizesDiv = element.querySelector('.sizes');
+            sizesDiv.style.display = 'none';
+            insertDiv.style.display = 'block';
+        }
+    </script>
+}
+@foreach (var item in Model)
+{
+    <div class="col-4 mt-3 mb-3">
+        <form action="@Url.Action("AddToCart", "Cart")" method="post" class="addtocart">
+            <div class="card border-0 d-flex flex-column-reverse">
+                <div class="card-footer border-0 p-0">
+                    <div class="d-flex flex-row mt-3 mb-2">
+                        @foreach (var color in item.Colors)
+                        {
+                            var specificImages = (List<ClothesStore.Models.Image>)item.Images;
+                            var imgUrl = specificImages.FirstOrDefault(img => img.ColorID == color.ColorID)?.UrlMainImg;
+                            var imageWithOrderOne = specificImages.FirstOrDefault(img => img.ColorID == color.ColorID && img.ImageOrder == 1);
+                            <div class="me-2">
+                                <input type="radio" class="btn-check" name="color" id="@color.ColorID" value="@color.ColorID"
+                                       autocomplete="off" onclick="changeImageAndSizes(this, '@item.ClothesItem.ClothesID')" data-color-id="@color.ColorID"
+                                       data-img-url="@imgUrl"
+                                       @(imageWithOrderOne != null ? "checked" : "")>
+                                <label class="btn rounded-circle d-flex justify-content-center align-items-center" for="@color.ColorID" style="width: 20px; height: 25px;">
+                                    <img src="@color.UrlImage" alt="@color.ColorName" class="rounded-circle" style="width: 20px; height: 20px;">
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    <div class="mb-2">
+                        <a class="@Url.Action("Index", "ClothesDetail", new { id = item.ClothesItem.ClothesID })" href="#" style="text-decoration:none">
+                            <p class="card-text" style="color:black">@item.ClothesItem.ClothesName</p>
+                        </a>
+                    </div>
+                    <div class="mb-2">
+                        <span><strong>@item.ClothesItem.Price đ</strong></span>
+                    </div>
+                </div>
+                <div class="card-body p-0 position-relative" onmouseleave="hideSizes(this)">
+                    @*Main image*@
+                    <a href="@Url.Action("Index", "ClothesDetail", new { id = item.ClothesItem.ClothesID })">
+                        <img id="mainImage_@item.ClothesItem.ClothesID" class="mainImage img-fluid rounded" src="@item.ClothesItem.UrlImage" alt="Product Image" onmouseenter="showInsert(this)">
+                    </a>
+                    @*Hidden inputs for product data*@
+                    <input type="hidden" name="clothesId" value="@item.ClothesItem.ClothesID">
+                    <input type="hidden" name="clothesName" value="@item.ClothesItem.ClothesName">
+                    <input type="hidden" name="mainImage" value="@item.ClothesItem.UrlImage">
+                    <input type="hidden" name="price" value="@item.ClothesItem.Price">
+
+                    @*Insert div*@
+                    <div class="insert bg-light text-center p-2 position-absolute bottom-0 start-50 translate-middle-x mb-3 rounded btn btn-light border-0 hover-overlay" style="width: 90%;" onclick="toggleDiv(this)">
+                        Thêm vào giỏ hàng
+                    </div>
+                    @*Sizes div*@
+                    <div class="sizes bg-light text-center p-2 position-absolute bottom-0 start-50 translate-middle-x mb-3 rounded toggle-div" style="width: 90%; display: none;">
+                        Thêm vào giỏ hàng
+                        <div class="d-flex flex-row justify-content-center" id="sizeContainer_@item.ClothesItem.ClothesID">
+                            <div class="col-9 d-flex flex-wrap">
+                                @foreach (var size in item.Sizes)
+                                {
+                                    var specificImages = (List<ClothesStore.Models.Clothes_Color_Size>)item.Clothes_Color_Sizes;
+                                    var colorID = specificImages.FirstOrDefault(clo => clo.SizeID == size.SizeID)?.ColorID;
+                                    <div class="btn bg-white size-option p-0"
+                                         style="margin-left:5px; margin-top:5px; width:40px; height:40px; display:flex; justify-content:center; align-items:center;"
+                                         data-color="@colorID">
+                                        <input type="radio" class="btn-check" name="size" id="size_@item.ClothesItem.ClothesID-@size.SizeID" value="@size.SizeName" autocomplete="off">
+                                        <label class="btn btn-outline-primary m-0 p-0 d-flex justify-content-center align-items-center"
+                                               style="width:100%; height:100%; white-space:nowrap;"
+                                               for="size_@item.ClothesItem.ClothesID-@size.SizeID">
+                                            @size.SizeName
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+
+                            <button type="submit" class="btn btn-primary p-0 col-3" style="width:50px; margin:8px 0"><i class="bi bi-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+}

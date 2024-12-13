@@ -1,0 +1,58 @@
+﻿<div class="container d-flex " style="padding-bottom:50px; padding-top:40px">
+    <div class="logo col-4">
+        <div style="font-size:60px; font-weight:600">CLothe<span class="text-danger">STore</span></div>
+        <ul class="p-0 m-0 d-flex flex-column" style="list-style-type:none">
+            <li style="margin:10px">
+                <a style="color: black" href="#"><i class="bi bi-facebook"> Facebook.com</i></a>
+            </li>
+            <li style="margin:10px">
+                <a style="color: black" href="#"><i class="bi bi-twitter"> Twitter.com</i></a>
+            </li>
+            <li style="margin:10px">
+                <a style="color: black" href="#"><i class="bi bi-linkedin"> Linkedin.com</i></a>
+            </li>
+            <li style="margin:10px">
+                <a style="color: black" href="#"><i class="bi bi-youtube"> Youtube.com</i></a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-2">
+        <h5 style="font-weight:800">Category</h5>
+        <ul style="list-style-type: none;  padding: 0;">
+            <li>
+                <a href="@Url.Action("GetClothesByCate", "Clothes", new { categoryId = "CATE001"})" style="text-decoration:none; color:black;font-weight:500">
+                    <span>Nam</span> <!-- Display category name -->
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("GetClothesByCate", "Clothes", new { categoryId = "CATE002"})" style="text-decoration:none; color:black;font-weight:500">
+                    <span>Nữ</span> <!-- Display category name -->
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("GetClothesByCate", "Clothes", new { categoryId = "CATE004"})" style="text-decoration:none; color:black;font-weight:500">
+                    <span>Bé trai</span> <!-- Display category name -->
+                </a>
+            </li>
+            <li>
+                <a href="@Url.Action("GetClothesByCate", "Clothes", new { categoryId = "CATE03"})" style="text-decoration:none; color:black;font-weight:500">
+                    <span>Bé gái</span> <!-- Display category name -->
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-4">
+        <h5 style="font-weight:800">Loại sản phẩm</h5>
+        <ul class="d-flex flex-column flex-wrap p-0"style="height:200px">
+            @Html.Action("_ProductType", "Home")
+        </ul>
+
+    </div>
+    <div class="col-2">
+        <h5 style="font-weight:800">Hình thức thanh toán</h5>
+        <div style="margin-top:5px">
+            <img src="https://canifa.com/assets/images/pay.svg" />
+        </div>
+
+    </div>
+</div>

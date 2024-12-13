@@ -1,0 +1,26 @@
+﻿<link href="~/Content/css/Reposive.css" rel="stylesheet" />
+
+@if (TempData.ContainsKey("messages"))
+{
+    ClothesStore.Library.NotiMessage messages = (ClothesStore.Library.NotiMessage)TempData["messages"];
+
+    <div id="toastMessage" class="alert alert-@messages.TypeNoMess alert-dismissible alert-alt fade show">
+        <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close">
+            <span><i class="mdi mdi-close"></i></span>
+        </button>
+        @messages.NotiMess
+    </div>
+    <div id="toastMessage" class="toast-custom">
+        
+    </div>
+}
+
+<script>
+    // Script để tự động xóa thông báo sau 2 giây
+    setTimeout(function () {
+        var toast = document.getElementById('toastMessage');
+        if (toast) {
+            toast.remove(); // Xóa thông báo
+        }
+    }, 1500);
+</script>

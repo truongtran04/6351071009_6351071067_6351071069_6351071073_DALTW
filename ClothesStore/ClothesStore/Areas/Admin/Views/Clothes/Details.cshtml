@@ -1,0 +1,138 @@
+﻿@model ClothesStore.Models.Cloth
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Quần áo";
+    ViewBag.FucLabel = "Chi tiết quần áo";
+}
+
+
+<section class="content">
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-9 p-md-0">
+                <div class="row">
+                    <div class="col-md-2 p-0">
+                        <img src="@Model.UrlImage" class="img-fluid rounded"/>
+                    </div>
+                    <div class="col-md-10">
+                        <label class="text-uppercase h4">
+                            @Model.ClothesName
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                <a href="@Url.Action("Index", "Clothes")" class="btn btn-primary">
+                    Quay lại
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="custom-tab-1">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#home1">Chi Tiết</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#profile1">Hình ảnh</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#contact1">Số lượng</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="home1" role="tabpanel">
+                        <div class="pt-4">
+                            @if (Model.IsDeleted == false)
+                            {
+                                <a href="@Url.Action("Edit", "Clothes", new { id = Model.ClothesID })" class="btn btn-danger mr-2">
+                                    Sửa
+                                </a>
+                            }
+                            <div class="table-responsive">
+                                <table class="table display p-0 m-0" style="min-width: 845px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 10px">.#</th>
+                                            <th>Mã quần áo</th>
+                                            <th>Hình ảnh</th>
+                                            <th>Tên quần áo</th>
+                                            <th>Giá</th>
+                                            <th>Danh mục</th>
+                                            <th>Loại quần áo</th>
+                                            <th>Kiểu quần áo</th>
+                                            <th>Mô tả</th>
+                                            <th>Chất liệu</th>
+                                            <th>Hướng dẫn sử dụng</th>
+                                            <th>Ngày tạo</th>
+                                            <th>Ngày sửa</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td>@Html.DisplayFor(model => model.ClothesID)</td>
+                                            <td>
+                                                <img src="~/Content/images/clothes/@Model.MainImage" class="img-fluid" style="width: 80px" />
+                                            </td>
+                                            <td>@Html.DisplayFor(model => model.ClothesName)</td>
+                                            <td>@Html.DisplayFor(model => model.Price)</td>
+                                            <td>@Html.DisplayFor(model => model.Category.CategoryName)</td>
+                                            <td>@Html.DisplayFor(model => model.ClothingType.ClothingTypeName)</td>
+                                            <td>@Html.DisplayFor(model => model.ClothingStyle.ClothingStyleName)</td>
+                                            <td>@Html.DisplayFor(model => model.Description)</td>
+                                            <td>@Html.DisplayFor(model => model.Fabric)</td>
+                                            <td>@Html.DisplayFor(model => model.UserInstructions)</td>
+                                            <td>@Html.DisplayFor(model => model.CreatedAt)</td>
+                                            <td>@Html.DisplayFor(model => model.UpdatedAt)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="profile1">
+                        <div class="pt-4">
+                            @*<a href="@Url.Action("Create", "Images", new { idClothes = Model.ClothesID })" class="btn btn-success" id="toggleButton">Thêm</a>*@
+                            @Html.Action("GetImages", "Images", new { idClothes = Model.ClothesID })
+                            <!-- This part will be shown initially -->
+                            <div id="indexAction" style="display:block;">
+                                <!-- Button to trigger visibility change -->
+                            </div>
+                            <!-- This part will be hidden initially -->
+                            <div id="createAction" style="display:none;">
+
+                                @*@Html.Action("Create", "Images", new { idClothes = Model.ClothesID })*@
+                            </div>
+                        </div>
+
+                        @*<script>
+                            // JavaScript to toggle visibility
+                            document.getElementById("toggleButton").addEventListener("click", function () {
+                                var createAction = document.getElementById("createAction");
+                                var indexAction = document.getElementById("indexAction");
+                                if (createAction.style.display === "none") {
+                                    createAction.style.display = "block";  // Show Create action
+                                    indexAction.style.display = "none";
+                                } else {
+                                    createAction.style.display = "none";   // Hide Create action
+                                    indexAction.style.display = "block";
+                                }
+                            });
+                        </script>*@
+
+                    </div>
+                    <div class="tab-pane fade" id="contact1">
+                        <div class="pt-4">
+                            @Html.Action("GetQuantity", "Quantity", new { idClothes = Model.ClothesID })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+</section>

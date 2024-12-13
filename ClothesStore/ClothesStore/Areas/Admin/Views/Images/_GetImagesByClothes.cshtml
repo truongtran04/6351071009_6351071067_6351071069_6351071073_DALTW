@@ -1,0 +1,72 @@
+﻿@model IEnumerable<ClothesStore.Models.Image>
+@{
+    var clothesID = ViewBag.ClothesID;
+}
+
+<section class="content">
+    @Html.Partial("_Messages")
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <a href="@Url.Action("Create", "Images", new { idClothes = clothesID })" class="btn btn-success mr-2">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <span class="ml-1">Thêm mới</span>
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-responsive-sm">
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">.#</th>
+                            <th>Màu</th>
+                            <th style="width: 200px">Ảnh chính</th>
+                            <th style="width: 200px">Ảnh phụ 1</th>
+                            <th style="width: 200px">Ảnh phụ 2</th>
+                            <th style="width: 200px">Ảnh phụ 3</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int count = 1; }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@count</td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Color.ColorName)
+                                </td>
+                                <td>
+                                    <img src="@item.UrlMainImg" alt="Alternate Text" class="img-fluid" />
+                                </td>
+                                <td>
+                                    <img src="@item.UrlSecondaryImage1" alt="Alternate Text" class="img-fluid" />
+                                </td>
+                                <td>
+                                    <img src="@item.UrlSecondaryImage2" alt="Alternate Text" class="img-fluid" />
+                                </td>
+                                <td>
+                                    <img src="@item.UrlSecondaryImage3" alt="Alternate Text" class="img-fluid" />
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-success disabled"><i class="fa fa-toggle-on" aria-hidden="true"></i></a>
+                                    <a href="@Url.Action("Edit", "Images", new { id = item.ImageID })" class="btn btn-success">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                        <span>Sửa</span>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Images", new { id = item.ImageID })" class="btn btn-danger">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                        <span class="ml-1">Xóa</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            { count++; }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+

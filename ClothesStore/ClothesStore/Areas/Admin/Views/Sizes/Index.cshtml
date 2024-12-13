@@ -1,0 +1,69 @@
+﻿@model IEnumerable<ClothesStore.Models.Size>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Kích cỡ";
+    ViewBag.FucLabel = "Thông tin kích cỡ";
+}
+
+@section header{
+    <!-- Datatable -->
+    <link href="~/Public/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+}
+@section footer{
+    <!-- Datatable -->
+    <script src="~/Public/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Public/js/plugins-init/datatables.init.js"></script>
+}
+
+<section class="content">
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h3 class="card-title">
+                        <strong>Thông tin màu sắc</strong>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                <a href="@Url.Action("Create", "Sizes")" class="btn btn-success">
+                    Thêm mới
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="example" class="display p-0" style="min-width: 845px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">.#</th>
+                            <th>Tên màu sắc</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td></td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.SizeName)
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("Edit", "Sizes", new { id = item.SizeID })" class="btn btn-success">Sửa</a>
+                                    <a href="@Url.Action("Details", "Sizes", new { id = item.SizeID })" class="btn btn-primary">Xem</a>
+                                    <a href="@Url.Action("Delete", "Sizes", new { id = item.SizeID })" class="btn btn-danger">Xóa</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+
+        </div>
+    </div>
+</section>

@@ -1,0 +1,148 @@
+﻿@model ClothesStore.Models.Clothes_Color_Size
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Danh mục";
+    ViewBag.FucLabel = "Thêm danh mục";
+}
+@section footer {
+    <script>
+   $(document).ready(function () {
+    // Khi thay đổi ClothesID, thực hiện Ajax để lấy danh sách ColorID
+    var clothesId = $('#idClothes').data('id'); // Lấy giá trị data-id
+    if (clothesId) {
+        $.ajax({
+            url: '@Url.Action("GetColorsByClothesID", "Quantity")',
+            type: 'POST',
+            data: { clothesId: clothesId },
+            success: function (data) {
+                var colorContainer = $('#color-checkboxes');
+                colorContainer.empty();
+                if (data && data.length > 0) {
+                    $.each(data, function (i, color) {
+                        var colorRow = `
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="selectedColors" value="${color.ColorID}" class="color-checkbox"/> ${color.ColorName}
+                                </label>
+                                <div class="color-details" style="display:none;">
+                                    <div class="form-group">
+                                        <label>Size</label>
+                                        <select name="size_${color.ColorID}" class="form-control size-dropdown">
+                                            <option value="">Select Size</option>
+                                            @foreach (var size in ViewBag.SizeList)
+                                            {
+                                                <option value="@size.SizeID">@size.SizeName</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Quantity</label>
+                                        <input type="number" name="quantity_${color.ColorID}" class="form-control" min="0" value="0"/>
+                                    </div>
+                                    <button type="button" class="btn btn-primary add-size-quantity" data-color-id="${color.ColorID}">Add Size & Quantity</button>
+                                    <div class="additional-sizes" data-color-id="${color.ColorID}"></div>
+                                </div>
+                            </div>`;
+                        colorContainer.append(colorRow);
+                    });
+
+                    // Toggle hiển thị trường Size/Quantity khi chọn checkbox
+                    $('.color-checkbox').change(function () {
+                        var colorDetails = $(this).closest('.checkbox').find('.color-details');
+                        colorDetails.toggle(this.checked);
+                    });
+
+                    // Thêm các size/quantity bổ sung
+                    $('.add-size-quantity').click(function () {
+                        var colorId = $(this).data('color-id');
+                        var additionalContainer = $(`.additional-sizes[data-color-id="${colorId}"]`);
+                        var additionalRow = `
+                            <div class="form-group">
+                                <label>Size</label>
+                                <select name="additionalSize_${colorId}[]" class="form-control size-dropdown">
+                                    <option value="">Select Size</option>
+                                    @foreach (var size in ViewBag.SizeList)
+                                    {
+                                        <option value="@size.SizeID">@size.SizeName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quantity</label>
+                                <input type="number" name="additionalQuantity_${colorId}[]" class="form-control" min="0" value="0"/>
+                            </div>`;
+                        additionalContainer.append(additionalRow);
+                    });
+                } else {
+                    colorContainer.append('<p>No colors available for this product</p>');
+                }
+            },
+            error: function () {
+                alert('Failed to retrieve colors. Please try again.');
+            }
+        });
+    }
+});
+
+    </script>
+}
+<section class="content">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="card">
+            <div class="card-header border-bottom p-0 p-3 mx-1">
+                <div class="col-sm-6 p-md-0">
+                    <div class="welcome-text">
+                        <h3 class="card-title">
+                            <strong>@ViewBag.FucLabel</strong>
+                        </h3>
+                    </div>
+                </div>
+                <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                    <a href="@Url.Action("Index", "Quantity")" class="btn btn-primary">
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9">
+                        <!-- Dropdown chọn ClothesID -->
+                        <div class="form-group">
+                            @Html.HiddenFor(model => model.ClothesID, new { Value = Request.QueryString["idClothes"] })
+                            <div class="form-group">
+                                <label class="text-uppercase h6">
+                                    Tên quần áo
+                                    <span class="text-danger">(*)</span>
+                                </label>
+                                <input type="text" class="form-control" value="@ViewBag.ClothesName.ClothesName" id="idClothes" data-id="@ViewBag.ClothesName.ClothesID" readonly />
+                                @Html.ValidationMessageFor(model => model.ClothesID, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <!-- Checkbox chọn ColorID và nhập Size/Quantity cho từng màu -->
+                        <div class="form-group">
+                            @Html.Label("ColorID", "Select Colors", htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10" id="color-checkboxes">
+                                <!-- Checkboxs và các trường Size/Quantity sẽ được thêm bằng Ajax -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group m-0">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+

@@ -1,0 +1,86 @@
+﻿@model IEnumerable<ClothesStore.Models.Category>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Danh mục";
+    ViewBag.FucLabel = "Thông tin danh mục";
+}
+
+@section header{
+    <!-- Datatable -->
+    <link href="~/Public/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+}
+@section footer{
+    <!-- Datatable -->
+    <script src="~/Public/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/Public/js/plugins-init/datatables.init.js"></script>
+}
+
+
+<section class="content">
+    @Html.Partial("_Messages")
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h3 class="card-title">
+                        <strong>@ViewBag.FucLabel</strong>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                <a href="@Url.Action("Create", "Categories")" class="btn btn-success mr-2">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <span class="ml-1">Thêm mới</span>
+                </a>
+                <a href="@Url.Action("Trash", "Categories")" class="btn btn-danger">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                    <span class="ml-1">Thùng rác</span>
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="example" class="display p-0" style="min-width: 845px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">.#</th>
+                            <th>Tên danh mục</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td></td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CategoryName)
+                                </td>
+                                <td>
+                                    <a href="#" class="btn btn-success disabled"><i class="fa fa-toggle-on" aria-hidden="true"></i></a>
+                                    <a href="@Url.Action("Edit", "Categories", new { id = item.CategoryID })" class="btn btn-success">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                        <span>Sửa</span>
+                                    </a>
+                                    <a href="@Url.Action("Delete", "Categories", new { id = item.CategoryID })" class="btn btn-danger">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                        <span class="ml-1">Xóa</span>
+                                    </a>
+                                    <a href="@Url.Action("Details", "Categories", new { id = item.CategoryID })" class="btn btn-primary">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                        <span class="ml-1">Xem</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+</section>
+

@@ -1,0 +1,78 @@
+﻿@model ClothesStore.Models.ProfileViewModel
+
+<div class="p-4">
+    <span class="fw-bold fs-4">Thông tin cá nhân</span>
+
+    <div class="ms-2 mt-3">
+        @using (Html.BeginForm("EditProfile", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @Html.ValidationSummary(true)
+                </div>
+            }
+            <div class="form-group m-2">
+                <label for="FullName" class="mb-2">Họ tên:</label>
+                <input type="text" class="form-control rounded-pill" id="FullName" name="FullName" value="@Model.FullName" required />
+            </div>
+
+            <div class="form-group m-2">
+                <label for="PhoneNumber" class="mb-2">Số điện thoại:</label>
+                <input type="text" class="form-control rounded-pill" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber" required />
+            </div>
+
+            <div class="form-group m-2">
+                <label for="Address" class="mb-2">Địa chỉ:</label>
+                <input type="text" class="form-control rounded-pill" id="Address" name="Address" value="@Model.Address" required />
+            </div>
+
+            <div class="form-group m-2">
+                <label for="DateOfBirth" class="mb-2">Ngày sinh:</label>
+                <input type="date" class="form-control rounded-pill" id="DateOfBirth" name="DateOfBirth" value="@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("yyyy-MM-dd") : string.Empty)" />
+            </div>
+
+            <div class="form-group m-2">
+                <label for="Gender" class="mb-2">Giới tính:</label>
+                <select class="form-control rounded-pill" id="Gender" name="Gender">
+                    <option value="Nam" @(Model.Gender == "Nam" ? "selected" : "")>Nam</option>
+                    <option value="Nữ" @(Model.Gender == "Nữ" ? "selected" : "")>Nữ</option>
+                </select>
+            </div>
+
+            <div class="d-flex justify-content-center mt-5">
+                <button type="submit" class="btn btn-primary w-50 rounded-pill">Cập nhật thông tin</button>
+            </div>
+        }
+
+        <div class="text-center mt-3">
+            <p><a href="@Url.Action("Index", "Home")">Quay lại trang chính</a></p>
+        </div>
+
+
+    </div>
+   
+</div>
+<script>
+    $(document).ready(function () {
+        // Tắt nút "Lưu thông tin" khi trang được tải
+        const saveButton = $('button[type="submit"]');
+        saveButton.prop('disabled', true);
+
+        // Lưu giá trị ban đầu của form
+        const initialFormState = $('form').serialize();
+
+        // Kiểm tra sự thay đổi chỉ khi người dùng thực sự click hoặc thay đổi dữ liệu
+        $('form :input').on('click change input', function () {
+            const currentFormState = $('form').serialize();
+            // So sánh trạng thái hiện tại với trạng thái ban đầu
+            if (currentFormState !== initialFormState) {
+                saveButton.prop('disabled', false);  // Bật nút khi có thay đổi
+            } else {
+                saveButton.prop('disabled', true);  // Tắt nút nếu không có thay đổi
+            }
+        });
+    });
+</script>

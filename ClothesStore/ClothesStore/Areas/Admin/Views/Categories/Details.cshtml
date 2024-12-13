@@ -1,0 +1,56 @@
+﻿@model ClothesStore.Models.Category
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Danh mục";
+    ViewBag.FucLabel = "Chi tiết danh mục";
+}
+
+
+<section class="content">
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h3 class="card-title">
+                        <strong>@ViewBag.FucLabel</strong>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                @if (Model.IsHidden == false)
+                {
+                    <a href="@Url.Action("Edit", "Categories", new { id = Model.CategoryID })" class="btn btn-danger mr-2">
+                        Sửa
+                    </a>
+                }
+                <a href="@Url.Action("Index", "Categories")" class="btn btn-primary">
+                    Quay lại
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table display p-0 m-0" style="min-width: 845px;">
+                    <thead>
+                        <tr>
+                            <th>.#</th>
+                            <th>Mã danh mục</th>
+                            <th>Tên danh mục</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td>@Html.DisplayFor(model => model.CategoryID)</td>
+                            <td>@Html.DisplayFor(model => model.CategoryName)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+</section>

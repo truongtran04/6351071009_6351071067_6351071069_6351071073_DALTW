@@ -1,0 +1,156 @@
+﻿@model ClothesStore.Models.Cloth
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Quần áo";
+    ViewBag.FucLabel = "Sửa quần áo";
+}
+@section footer
+{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#ClothingTypeID').change(function () {
+            var clothingTypeID = $(this).val();
+            if (clothingTypeID) {
+                $.ajax({
+                    url: '@Url.Action("GetClothingStyles", "Clothes")',
+                    type: "GET",
+                    data: { clothingTypeID: clothingTypeID },
+                    success: function (data) {
+                        var $clothingStyleDropdown = $('#ClothingStyleID');
+                        $clothingStyleDropdown.empty();
+                        $.each(data, function (index, item) {
+                            $clothingStyleDropdown.append($('<option/>', {
+                                value: item.ClothingStyleID,
+                                text: item.ClothingStyleName
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+    });
+    </script>
+
+}
+<section class="content">
+    @using (Html.BeginForm("Edit", "Clothes", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ClothesID)
+        <div class="card">
+            <div class="card-header border-bottom p-0 p-3 mx-1">
+                <div class="col-sm-6 p-md-0">
+                    <div class="welcome-text">
+                        <h3 class="card-title">
+                            <strong>@ViewBag.FucLabel</strong>
+                        </h3>
+                    </div>
+                </div>
+                <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                    <a href="@Url.Action("Details", "Clothes", new { id = Model.ClothesID })" class="btn btn-primary">
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Tên quần áo
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.ClothesName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ClothesName, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Giá
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Giá sale
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.PriceSale, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PriceSale, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Mô tả
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Chất liệu
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.Fabric, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Fabric, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Hướng dẫn sử dụng
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.UserInstructions, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.UserInstructions, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Hình ảnh quần áo
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.TextBoxFor(model => model.MainImage, new { type = "file", @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.MainImage, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Danh mục
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.DropDownList("CategoryID", null, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.CategoryID, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Loại quần áo
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.DropDownList("ClothingTypeID", null, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.ClothingTypeID, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Kiểu quần áo
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.DropDownList("ClothingStyleID", null, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.ClothingStyleID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group m-0">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>

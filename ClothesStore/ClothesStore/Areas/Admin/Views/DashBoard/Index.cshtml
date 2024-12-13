@@ -1,0 +1,195 @@
+﻿@using System.Globalization
+@using ClothesStore.Models
+@{
+    ViewBag.Title = "Admin";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Admin";
+    ViewBag.FucLabel = "Dashboard";
+}
+@section header {
+    <link href="~/Public/vendor/chartist/css/chartist.min.css" rel="stylesheet">
+}
+@section footer {
+    <script src="~/Public/vendor/chartist/js/chartist.min.js"></script>
+    <script>
+        (function ($) {
+            var chartData = @Html.Raw(ViewBag.CountCate);
+            new Chartist.Pie('.ct-pie-chart', chartData);
+
+            // Cập nhật biểu đồ cột
+            var chartDataClothingType = @Html.Raw(ViewBag.CountClothingType);
+            new Chartist.Bar('.ct-bar-chart', chartDataClothingType);
+        })(jQuery);
+    </script>
+}
+<div class="row">
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="stat-widget-two card-body">
+                <div class="stat-content">
+                    <div class="stat-text">Thu nhập trong ngày</div>
+                    <div class="stat-digit">@ViewBag.TotalDay.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</div>
+                </div>
+                @*<div class="stat-content">
+                    <div class="stat-text">Thu nhập trong ngày</div>
+                    <div class="stat-digit">@ViewBag.TotalMonth.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</div>
+                </div>*@
+                <div class="progress mt-3">
+                    <div class="progress-bar bg-success progress-animated" style="width: @((ViewBag.TotalDay / ViewBag.TotalMonth) * 100)%; height:6px;" role="progressbar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="stat-widget-two card-body">
+                <div class="stat-content">
+                    <div class="stat-text">Số hóa đơn trong ngày</div>
+                    <div class="stat-digit">@ViewBag.OrderDay</div>
+                </div>
+                <div class="progress mt-3">
+                    <div class="progress-bar bg-warning progress-animated" style="width: @((ViewBag.OrderDay / ViewBag.OrderMaxDay) * 100)%; height:6px;" role="progressbar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="stat-widget-two card-body">
+                <div class="stat-content">
+                    <div class="stat-text">Tổng sản phẩm</div>
+                    <div class="stat-digit">@ViewBag.Clothes</div>
+                </div>
+                <div class="progress mt-3">
+                    <div class="progress-bar bg-primary progress-animated" style="width: @((ViewBag.Clothes / ViewBag.Clothes) * 100)%; height:6px;" role="progressbar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+        <div class="card">
+            <div class="stat-widget-two card-body">
+                <div class="stat-content">
+                    <div class="stat-text">Số khách hàng</div>
+                    <div class="stat-digit">@ViewBag.Customer</div>
+                </div>
+                <div class="progress mt-3">
+                    <div class="progress-bar bg-danger progress-animated" style="width: @((ViewBag.Customer / ViewBag.Customer) * 100)%; height:6px;" role="progressbar"></div>
+                </div>
+            </div>
+        </div>
+        <!-- /# card -->
+    </div>
+    <!-- /# column -->
+</div>
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Fee Collections and Expenses</h4>
+            </div>
+            <div class="card-body">
+                <div class="ct-bar-chart mt-5"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Tỷ lệ quần áo</h4>
+            </div>
+            <div class="card-body">
+                <div class="ct-pie-chart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Danh sách khách hàng mới</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table student-data-table m-t-20">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn hàng</th>
+                                <th>Khách hàng</th>
+                                <th>Tổng tiền</th>
+                                <th>Ngày</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in ViewBag.NewOrder)
+                            {
+                                <tr>
+                                    <td class="text-center">@order.OrderID</td>
+                                    <td>@order.User.Username</td> <!-- Lấy Username từ User -->
+                                    <td>
+                                        @order.TotalAmount.ToString("C0", CultureInfo.GetCultureInfo("vi-VN")) <!-- Định dạng tiền VND -->
+                                    </td>
+                                    <td>@order.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @if (order.Status == "Đã_giao")
+                                        {
+                                            <div class="badge badge-success">@order.Status</div>
+                                        }
+                                        else if (order.Status == "Đã_hủy")
+                                        {
+                                            <div class="badge badge-danger">@order.Status</div>
+                                        }
+                                        else if (order.Status == "Đang_chờ_xử_lý")
+                                        {
+                                            <div class="badge badge-info">@order.Status</div>
+                                        }
+                                        else if (order.Status == "Đã_xử_lý")
+                                        {
+                                            <div class="badge badge-warning">@order.Status</div>
+                                        }
+                                        else if (order.Status == "Đã_gửi")
+                                        {
+                                            <div class="badge badge-primary">@order.Status</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Danh sách khách hàng mới</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table student-data-table m-t-20">
+                        <thead>
+                            <tr>
+                                <th>Khách hàng</th>
+                                <th>Email</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in ViewBag.NewCustommer)
+                            {
+                                <tr>
+                                    <td>@user.Username</td>
+                                    <td>@user.Email</td>
+                                    <td>@user.IsActive</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

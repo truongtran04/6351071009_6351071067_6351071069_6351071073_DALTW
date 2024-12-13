@@ -1,0 +1,201 @@
+﻿@using ClothesStore.Models
+@model ClothesStore.Models.User
+@using System.Globalization
+@{
+    var userProfile = ViewBag.UserProfile;
+    var cartItems = ViewBag.CartDetails; // Giả sử bạn đã truyền danh sách sản phẩm vào ViewBag
+    ViewBag.Title = "Chi tiết đơn hàng";
+    Layout = "~/Views/Shared/_OrdersNavbar.cshtml";
+}
+<div class="container my-4 p-4 shadow-sm bg-light rounded">
+    <h1 class="mb-4">Thông tin đơn hàng</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Box Thông tin giao hàng -->
+            <div class="p-4 mb-3 bg-white rounded shadow-sm">
+                <h2 class="mb-4">Thông tin giao hàng</h2>
+                @if (userProfile != null)
+                {
+                    <form>
+                        <div class="form-group mb-3">
+                            <label for="fullName"><strong>Tên</strong></label>
+                            <input type="text" id="fullName" name="fullName" class="form-control"
+                                   value="@userProfile.FullName"
+                                   placeholder="Nhập tên của bạn" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="phoneNumber"><strong>Số điện thoại</strong></label>
+                            <input type="text" id="phoneNumber" name="phoneNumber" class="form-control"
+                                   value="@userProfile.PhoneNumber"
+                                   placeholder="Nhập số điện thoại của bạn" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="address"><strong>Địa chỉ</strong></label>
+                            <input type="text" id="address" name="address" class="form-control"
+                                   value="@userProfile.Address"
+                                   placeholder="Nhập địa chỉ của bạn" required />
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <p>Không có thông tin profile. Vui lòng nhập thông tin dưới đây:</p>
+                    <form>
+                        <div class="form-group mb-3">
+                            <label for="fullName"><strong>Tên</strong></label>
+                            <input type="text" id="fullName" name="fullName" class="form-control"
+                                   placeholder="Nhập tên của bạn" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="phoneNumber"><strong>Số điện thoại</strong></label>
+                            <input type="text" id="phoneNumber" name="phoneNumber" class="form-control"
+                                   placeholder="Nhập số điện thoại của bạn" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="address"><strong>Địa chỉ</strong></label>
+                            <input type="text" id="address" name="address" class="form-control"
+                                   placeholder="Nhập địa chỉ của bạn" required />
+                        </div>
+
+
+                    </form>
+                }
+            </div>
+
+            <!-- Box Giỏ hàng -->
+            <div class="p-4 mb-3 bg-white rounded shadow-sm">
+                <h2 class="mt-4">Sản phẩm trong giỏ hàng</h2>
+                @if (cartItems != null && cartItems.Count > 0)
+                {
+                    <div class="d-flex flex-wrap mt-3">
+                        @foreach (var item in (List<CartDetail>)cartItems)
+                        {
+                            var uniqueId = $"{item.ClothesID}_{item.ColorID}_{item.SizeName}";
+                            <div class="card me-3 mb-3" style="width: 100%; max-width: 48rem;">
+                                <div class="row no-gutters">
+                                    <div class="col-md-6">
+                                        <img src="@item.MainImage" alt="@item.ClothesName" style="height: 400px;" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@item.ClothesName</h5>
+                                            <div class="mb-2">
+                                                <strong>Kích cỡ:</strong> <span>@item.SizeName</span><br />
+                                                <strong>Màu sắc:</strong>
+                                                <div class="color-options d-flex mb-2">
+                                                    @if (ViewBag.Colors != null)
+                                                    {
+                                                        foreach (var color in ViewBag.Colors)
+                                                        {
+                                                            if (color.ColorID == item.ColorID)
+                                                            {
+                                                                <div class="me-2">
+                                                                    <img src="@color.UrlImage" alt="@color.ColorName" style="width: 20px; height: 20px; border-radius: 50%;">
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                            <p class="card-text">
+                                                <strong>Số lượng:</strong> <span>@item.Quantity</span><br />
+                                                <strong>Giá:</strong> <span class="price">@item.Price.ToString("C0", CultureInfo.GetCultureInfo("vi-VN"))</span><br />
+                                                <strong>Tổng giá:</strong> <span id="total_@uniqueId" class="total-price">@item.TotalPrice</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>Giỏ hàng của bạn đang trống.</p>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <!-- Box Chi tiết đơn hàng -->
+            <div class="p-4 mb-3 bg-white rounded shadow-sm">
+                <h2 class="mb-4">Thanh toán</h2>
+
+                <div class="form-group">
+                    <label for="paymentMethod"><strong>Phương thức thanh toán:</strong></label>
+                    <select id="paymentMethod" name="PaymentMethod" class="form-control" required>
+                        <option value="MoMo">MoMo</option>
+                        <option value="ATM">ATM</option>
+                        <option value="COD">Thanh toán khi nhận hàng</option>
+                    </select>
+                </div>
+
+                <p><strong>Tổng đơn hàng: </strong><span id="totalCartPrice">@ViewBag.TotalAmount.ToString("N0") ₫</span></p>
+                <input type="hidden" id="totalAmount" value="@ViewBag.TotalAmount" />
+                <a href="@Url.Action("OrderDetail","Orders")" id="btnPayment" class="btn btn-success mt-3">Thanh toán</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Hàm định dạng số thành định dạng VND
+            function formatCurrency(amount) {
+                return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " ₫"; // Định dạng số với dấu phẩy và thêm ký hiệu ₫
+            }
+
+            // Định dạng tổng giá cho từng sản phẩm
+            $('.total-price').each(function() {
+                var totalPrice = parseFloat($(this).text()); // Lấy giá trị tổng giá và chuyển đổi thành số
+                $(this).text(formatCurrency(totalPrice)); // Cập nhật giá trị đã định dạng
+            });
+
+            $('#btnPayment').click(function () {
+                var paymentMethod = $('#paymentMethod').val();
+                var fullName = $('#fullName').val();
+                var phoneNumber = $('#phoneNumber').val();
+                var address = $('#address').val();
+                var totalAmount = $('#totalAmount').val(); // Lấy giá trị TotalAmount
+
+                if (!paymentMethod || !fullName || !phoneNumber || !address) {
+                    alert('Vui lòng điền đầy đủ thông tin thanh toán và giao hàng.');
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("ProcessPayment", "Orders")',
+                    data: {
+                        paymentMethod: paymentMethod,
+                        fullName: fullName,
+                        phoneNumber: phoneNumber,
+                        address: address,
+                        totalAmount: totalAmount // Gửi totalAmount
+                    },
+                    success: function (response) {
+                        console.log(response);  // Kiểm tra xem response trả về đúng không
+                        if (response.success) {
+                            alert('Đặt hàng thành công!');
+                            // Điều hướng đến trang OrderDetai
+                            
+                            window.location.href = '@Url.Action("OrderDetail", "Orders", new { orderId = "__orderId__" })'.replace("__orderId__", response.orderId);
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                    }
+                });
+            });
+        });
+    </script>
+}
+

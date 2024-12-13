@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <meta charset="utf-8" />
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="~/Public/images/favicon.png">
+    <link rel="stylesheet" href="~/Public/vendor/owl-carousel/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/Public/vendor/owl-carousel/css/owl.theme.default.min.css">
+    <link href="~/Public/vendor/jqvmap/css/jqvmap.min.css" rel="stylesheet">
+    <link href="~/Public/css/style.css" rel="stylesheet">
+
+    @RenderSection("header", required: false)
+</head>
+<body>
+    <!--Preloader start-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--Preloader end-->
+    <!--Main wrapper start-->
+    <div id="main-wrapper">
+
+        <!--Nav header start-->
+        <div class="nav-header">
+            <a href="@Url.Action("Index", "Dashboard")" class="brand-logo">
+                <img class="logo-abbr" src="~/Public/images/logo.png" alt="">
+                <img class="logo-compact" src="~/Public/images/logo-text.png" alt="">
+                <img class="brand-title" src="~/Public/images/logo-text.png" alt="">
+            </a>
+
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
+            </div>
+        </div>
+        <!--Nav header end-->
+        <!--Header start-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+
+                        </div>
+                        
+                        <ul class="navbar-nav header-right">
+                            <li class="nav-item dropdown header-profile">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <i class="mdi mdi-account"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="@Url.Action("Index","Home",new {area = ""})" class="dropdown-item">Đăng xuất</a>
+
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!--Header end ti-comment-alt-->
+        <!--Sidebar start-->
+        <div class="quixnav">
+            <div class="quixnav-scroll">
+                @Html.Partial("_Sidebar")
+            </div>
+        </div>
+        <!--Sidebar end-->
+        <!--Content body start-->
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <div class="row page-titles mx-0">
+                    <div class="col-sm-6 p-md-0">
+                        <div class="welcome-text">
+                            <h1>@ViewBag.Label</h1>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">@ViewBag.Label</a></li>
+                            <li class="breadcrumb-item"><a href="#">@ViewBag.FucLabel</a></li>
+                        </ol>
+                    </div>
+                </div>
+                @RenderBody()
+            </div>
+        </div>
+        <!--Content body end-->
+        <!--Footer start-->
+        <div class="footer">
+            <div class="copyright">
+                <p>Copyright © Designed &amp; Developed by <a href="#" target="_blank">Quixkit</a> 2019</p>
+            </div>
+        </div>
+        <!--Footer end-->
+
+
+
+    </div>
+    <!--Main wrapper end-->
+    <!--Scripts-->
+    <!-- Required vendors -->
+    <script src="~/Public/vendor/global/global.min.js"></script>
+    <script src="~/Public/js/quixnav-init.js"></script>
+    <script src="~/Public/js/custom.min.js"></script>
+
+
+    <!-- Vectormap -->
+    <script src="~/Public/vendor/raphael/raphael.min.js"></script>
+
+    <script src="~/Public/vendor/circle-progress/circle-progress.min.js"></script>
+    <script src="~/Public/vendor/chart.js/Chart.bundle.min.js"></script>
+
+    <script src="~/Public/vendor/gaugeJS/dist/gauge.min.js"></script>
+
+    <!--  flot-chart js -->
+    <script src="~/Public/vendor/flot/jquery.flot.js"></script>
+    <script src="~/Public/vendor/flot/jquery.flot.resize.js"></script>
+
+    <!-- Owl Carousel -->
+    <script src="~/Public/vendor/owl-carousel/js/owl.carousel.min.js"></script>
+
+    <!-- Counter Up -->
+    <script src="~/Public/vendor/jqvmap/js/jquery.vmap.min.js"></script>
+    <script src="~/Public/vendor/jqvmap/js/jquery.vmap.usa.js"></script>
+    <script src="~/Public/vendor/jquery.counterup/jquery.counterup.min.js"></script>
+    <script src="~/Public/js/dashboard/dashboard-1.js"></script>
+
+    @RenderSection("footer", required: false)
+</body>
+</html>

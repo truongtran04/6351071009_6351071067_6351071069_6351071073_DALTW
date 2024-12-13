@@ -1,0 +1,260 @@
+﻿@model ClothesStore.Models.Image
+@{
+
+    ViewBag.Title = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Quần áo";
+    ViewBag.FucLabel = "Hình ảnh";
+}
+
+@section footer{
+    <script type="text/javascript">
+            document.addEventListener("DOMContentLoaded", function () {
+            var clothesName = document.getElementById("idClothes").value;  // Tên sản phẩm cố định
+            var colorName = "";  // Khởi tạo tên màu
+            var colorID = "";  // Khởi tạo ColorID
+            var imageNameInput = document.getElementById("ImageName");
+
+            function convertToSlug(text) {
+                const diacriticsMap = {
+                    // Bản đồ ký tự có dấu thành không dấu
+                    'á': 'a', 'à': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+                    'ấ': 'a', 'ầ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a', 'â': 'a',
+                    'ắ': 'a', 'ằ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a', 'ă': 'a',
+                    'đ': 'd',
+                    'é': 'e', 'è': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+                    'ê': 'e', 'ế': 'e', 'ề': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+                    'í': 'i', 'ì': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+                    'ó': 'o', 'ò': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+                    'ố': 'o', 'ồ': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o', 'ô': 'o',
+                    'ớ': 'o', 'ờ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o', 'ơ': 'o',
+                    'ú': 'u', 'ù': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+                    'ư': 'u', 'ứ': 'u', 'ừ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+                    'ý': 'y', 'ỳ': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y'
+                };
+                let normalizedText = text.toLowerCase().trim();
+                normalizedText = normalizedText.replace(/[^a-z0-9\s]/g, function (char) {
+                    return diacriticsMap[char] || char;
+                });
+                return normalizedText
+                    .replace(/\s+/g, '-')  // Thay khoảng trắng bằng dấu gạch ngang
+                    .replace(/--+/g, '-')  // Thay nhiều dấu gạch ngang liên tiếp thành một
+                    .replace(/^-+|-+$/g, ''); // Loại bỏ dấu gạch ngang ở đầu và cuối
+            }
+
+            function updateImageName() {
+                if (clothesName && colorName) {
+                    var slugClothesName = convertToSlug(clothesName);
+                    var slugColorName = convertToSlug(colorName);
+                    imageNameInput.value = slugClothesName + '-' + slugColorName; // Nối tên sản phẩm và màu sắc
+                    imageNameInput.readOnly = true; // Khóa trường sau khi cập nhật
+                } else {
+                    imageNameInput.value = ''; // Xóa trường nếu chưa đủ thông tin
+                    imageNameInput.readOnly = false; // Cho phép chỉnh sửa nếu chưa chọn
+                }
+            }
+
+            // Lấy dữ liệu màu sắc từ server
+            let colors = [];
+            fetch('@Url.Action("GetColors", "Images")')
+                .then(response => response.json())
+                .then(data => colors = data);
+
+            document.getElementById("colorInput").addEventListener("input", function () {
+                const input = this.value.toLowerCase();
+                const suggestions = colors.filter(color => color.ColorName.toLowerCase().includes(input));
+                const suggestionList = document.getElementById("colorSuggestions");
+                suggestionList.innerHTML = ""; // Xóa các gợi ý cũ
+                if (suggestions.length > 0) {
+                    suggestionList.style.display = "block";
+                    suggestions.forEach(color => {
+                        const li = document.createElement("li");
+                        li.className = "list-group-item list-group-item-action d-flex justify-content-between align-items-center";
+                        li.style.cursor = "pointer";
+                        const text = document.createElement("span");
+                        text.textContent = color.ColorName;
+                        const img = document.createElement("img");
+                        img.src = color.UrlImage;
+                        img.alt = color.ColorName;
+                        img.style.width = "20%";
+                        img.style.height = "20px";
+                        img.style.border = "1px solid #ccc";
+                        img.style.borderRadius = "4px";
+                        li.appendChild(text);
+                        li.appendChild(img);
+                        li.addEventListener("click", function () {
+                            document.getElementById("selectedColor").value = color.ColorName; // Đặt màu đã chọn
+                            const imageElement = document.getElementById("selectedColorImage");
+                            imageElement.src = color.UrlImage; // Đặt hình ảnh màu
+                            imageElement.style.display = "block"; // Hiển thị ảnh màu
+                            suggestionList.style.display = "none"; // Ẩn gợi ý
+                            colorName = color.ColorName; // Cập nhật tên màu
+                            colorID = color.ColorID; // Cập nhật ColorID
+                            document.getElementById("selectedColorID").value = color.ColorID; // Đặt ColorID vào trường ẩn
+                            updateImageName(); // Cập nhật tên hình ảnh
+                        });
+                        suggestionList.appendChild(li);
+                    });
+                } else {
+                    suggestionList.style.display = "none";
+                }
+            });
+
+            // Ẩn các gợi ý khi nhấn ngoài input
+            document.addEventListener("click", function (event) {
+                if (!event.target.closest("#colorInput")) {
+                    document.getElementById("colorSuggestions").style.display = "none";
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        function previewImage(input, previewId) {
+            var file = input.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var preview = document.getElementById(previewId);
+                preview.style.display = 'block';  // Show the image
+                preview.src = e.target.result;  // Set the source of the preview image
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);  // Read the file as a Data URL
+            }
+        }
+    </script>
+}
+<section class="content">
+    @using (Html.BeginForm("Create", "Images", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ImageID)
+        <div class="card">
+            <div class="card-header border-bottom p-0 p-3 mx-1">
+                <div class="col-sm-6 p-md-0">
+                    <div class="welcome-text">
+                        <h3 class="card-title">
+                            <strong>@ViewBag.FucLabel</strong>
+                        </h3>
+                    </div>
+                </div>
+                <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                    <a href="@Url.Action("Details", "Clothes", new { id = @ViewBag.ClothesName.ClothesID })" class="btn btn-primary">
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="@ViewBag.ClothesName.UrlImage" class="img-fluid rounded" />
+                    </div>
+                    <div class="col-md-9 mt-4">
+                        @Html.HiddenFor(model => model.ClothesID, new { Value = Request.QueryString["idClothes"] })
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Tên quần áo
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            <input type="text" class="form-control" value="@ViewBag.ClothesName.ClothesName" id="idClothes" readonly />
+                            @Html.ValidationMessageFor(model => model.ClothesID, "", new { @class = "text-danger" })
+                        </div>
+                        @Html.Hidden("ColorID", null, new { id = "selectedColorID" })
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="colorInput" class="text-uppercase h6">
+                                        Nhập màu:
+                                        <span class="text-danger">(*)</span>
+                                    </label>
+                                    <input type="text" id="colorInput" class="form-control" placeholder="Nhập màu..." autocomplete="off">
+                                    <ul id="colorSuggestions" class="list-group" style="display: none; max-height: 150px; overflow-y: auto;">
+                                        <!-- Danh sách gợi ý -->
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="selectedColor" class="text-uppercase h6">
+                                        Màu đã chọn:
+                                        <span class="text-danger">(*)</span>
+                                    </label>
+                                    <div class="d-flex align-items-center form-control">
+                                        <input type="text" id="selectedColor" class="border-0" readonly style="flex-grow: 1;">
+                                        <img id="selectedColorImage" src="" alt="Hình ảnh màu" class="rounded" style="display: none; width: 20%; height: 20px; margin-left: 10px;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Tên hình hình ảnh - màu sắc
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.ImageName, new { htmlAttributes = new { @class = "form-control", @id = "ImageName", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.ImageName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Ảnh chính
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.TextBoxFor(model => model.MainImage, new { type = "file", @class = "form-control", onchange = "previewImage(this, 'mainImagePreview')" })
+                            <img id="mainImagePreview" class="rounded" style="display:none; max-width: 100%; margin-top: 10px;" />
+                            @Html.ValidationMessageFor(model => model.MainImage, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Ảnh phụ 1
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.TextBoxFor(model => model.SecondaryImage1, new { type = "file", @class = "form-control", onchange = "previewImage(this, 'secondaryImage1Preview')" })
+                            <img id="secondaryImage1Preview" class="rounded" style="display:none; max-width: 100%; margin-top: 10px;" />
+                            @Html.ValidationMessageFor(model => model.SecondaryImage1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Ảnh phụ 2
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.TextBoxFor(model => model.SecondaryImage2, new { type = "file", @class = "form-control", onchange = "previewImage(this, 'secondaryImage2Preview')" })
+                            <img id="secondaryImage2Preview" class="rounded" style="display:none; max-width: 100%; margin-top: 10px;" />
+                            @Html.ValidationMessageFor(model => model.SecondaryImage2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Ảnh phụ 3
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.TextBoxFor(model => model.SecondaryImage3, new { type = "file", @class = "form-control", onchange = "previewImage(this, 'secondaryImage3Preview')" })
+                            <img id="secondaryImage3Preview" class="rounded" style="display:none; max-width: 100%; margin-top: 10px;" />
+                            @Html.ValidationMessageFor(model => model.SecondaryImage3, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group m-0">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>

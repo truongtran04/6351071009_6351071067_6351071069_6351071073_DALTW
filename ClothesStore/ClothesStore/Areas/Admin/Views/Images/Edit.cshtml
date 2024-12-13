@@ -1,0 +1,191 @@
+﻿@model ClothesStore.Models.Image
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+@section footer{
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            var clothesSelect = document.getElementById("ClothesID");
+            var colorSelect = document.getElementById("ColorID");
+            var imageNameInput = document.getElementById("ImageName");
+
+            // Hàm chuyển đổi chuỗi sang không dấu và viết thường
+            function convertToSlug(text) {
+                const diacriticsMap = {
+                    'á': 'a', 'à': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+                    'ấ': 'a', 'ầ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a', 'â': 'a',
+                    'ắ': 'a', 'ằ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a', 'ă': 'a',
+                    'đ': 'd',
+                    'é': 'e', 'è': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+                    'ê': 'e', 'ế': 'e', 'ề': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+                    'í': 'i', 'ì': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+                    'ó': 'o', 'ò': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+                    'ố': 'o', 'ồ': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o', 'ô': 'o',
+                    'ớ': 'o', 'ờ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o', 'ơ': 'o',
+                    'ú': 'u', 'ù': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+                    'ư': 'u', 'ứ': 'u', 'ừ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+                    'ý': 'y', 'ỳ': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y'
+                };
+
+                // Thay thế các ký tự có dấu bằng ký tự không dấu
+                let normalizedText = text.toLowerCase().trim();
+                normalizedText = normalizedText.replace(/[^a-z0-9\s]/g, function (char) {
+                    return diacriticsMap[char] || char;
+                });
+
+                return normalizedText
+                    .replace(/\s+/g, '-')    // Thay thế khoảng trắng bằng dấu gạch ngang
+                    .replace(/--+/g, '-')    // Thay thế nhiều dấu gạch ngang thành một
+                    .replace(/^-+|-+$/g, ''); // Loại bỏ dấu gạch ngang ở đầu và cuối
+            }
+
+            function updateImageName() {
+                var clothesName = clothesSelect.options[clothesSelect.selectedIndex].text;
+                var colorName = colorSelect.options[colorSelect.selectedIndex].text;
+
+                if (clothesName && colorName && clothesName !== "Please select..." && colorName !== "Please select...") {
+                    var slugClothesName = convertToSlug(clothesName);
+                    var slugColorName = convertToSlug(colorName);
+                    imageNameInput.value = slugClothesName + '-' + slugColorName;
+                    imageNameInput.readOnly = true; // Khóa trường ImageName sau khi điền
+                } else {
+                    imageNameInput.value = ''; // Xóa giá trị nếu chưa chọn đủ
+                    imageNameInput.readOnly = false; // Mở khóa nếu chưa chọn đầy đủ
+                }
+            }
+
+            // Lắng nghe sự kiện thay đổi ở các dropdown
+            clothesSelect.addEventListener("change", updateImageName);
+            colorSelect.addEventListener("change", updateImageName);
+        });
+
+    </script>
+    <script>
+        function previewImage(input, previewId) {
+            var file = input.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var preview = document.getElementById(previewId);
+                preview.style.display = 'block';  // Show the image
+                preview.src = e.target.result;  // Set the source of the preview image
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);  // Read the file as a Data URL
+            }
+        }
+    </script>
+}
+<section class="content">
+    @using (Html.BeginForm("Edit", "Images", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ImageID)
+        <div class="card">
+            <div class="card-header border-bottom p-0 p-3 mx-1">
+                <div class="col-sm-6 p-md-0">
+                    <div class="welcome-text">
+                        <h3 class="card-title">
+                            <strong>@ViewBag.FucLabel</strong>
+                        </h3>
+                    </div>
+                </div>
+                <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                    <a href="@Url.Action("Details", "Clothes", new { id = Model.ClothesID })" class="btn btn-primary">
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-2">
+                        <img src="@Model.Cloth.UrlImage" class="img-fluid rounded" />
+                    </div>
+                    <div class="col-md-9 mt-4">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Tên quần áo
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.Cloth.ClothesName, new { htmlAttributes = new { @class = "form-control", @id = "ClothesID", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.ClothesID, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Màu sắc
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.Color.ColorName, new { htmlAttributes = new { @class = "form-control", @id = "ColorID", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.ColorID, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Tên hình hình ảnh - màu sắc
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.EditorFor(model => model.ImageName, new { htmlAttributes = new { @class = "form-control disabled", @id = "ImageName", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.ImageName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Ảnh chính
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.TextBoxFor(model => model.MainImage, new { type = "file", @class = "form-control", onchange = "previewImage(this, 'mainImagePreview')" })
+                            <img src="@Model.UrlMainImg" id="mainImagePreview" class="rounded" style="display: block; max-width: 100%; margin-top: 10px;" />
+                            @Html.ValidationMessageFor(model => model.MainImage, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Ảnh phụ 1
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.TextBoxFor(model => model.SecondaryImage1, new { type = "file", @class = "form-control", onchange = "previewImage(this, 'secondaryImage1Preview')" })
+                            <img src="@Model.UrlSecondaryImage1" id="secondaryImage1Preview" class="rounded" style="display: block; max-width: 100%; margin-top: 10px;" />
+                            @Html.ValidationMessageFor(model => model.SecondaryImage1, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Ảnh phụ 2
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.TextBoxFor(model => model.SecondaryImage2, new { type = "file", @class = "form-control", onchange = "previewImage(this, 'secondaryImage2Preview')" })
+                            <img src="@Model.UrlSecondaryImage2" id="secondaryImage2Preview" class="rounded" style="display: block; max-width: 100%; margin-top: 10px;" />
+                            @Html.ValidationMessageFor(model => model.SecondaryImage2, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="text-uppercase h6">
+                                Ảnh phụ 3
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            @Html.TextBoxFor(model => model.SecondaryImage3, new { type = "file", @class = "form-control", onchange = "previewImage(this, 'secondaryImage3Preview')" })
+                            <img src="@Model.UrlSecondaryImage3" id="secondaryImage3Preview" class="rounded" style="display: block; max-width: 100%; margin-top: 10px;" />
+                            @Html.ValidationMessageFor(model => model.SecondaryImage3, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group m-0">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>

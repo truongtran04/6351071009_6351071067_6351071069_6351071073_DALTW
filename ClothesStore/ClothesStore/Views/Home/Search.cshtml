@@ -1,0 +1,110 @@
+﻿@model PagedList.IPagedList<ClothesStore.Models.ViewModels.ClothesViewModel>
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Search Result";
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+}
+<input type="hidden" id="searchTerm" value="@ViewBag.SearchTerm" />
+<div>
+    <div class="container" style="padding-top:30px">
+        <div class="container-fluid">
+            @if (!Model.Any())
+            {
+                <div class="bg-light mt-3">
+                    <p class="text-left"><span class="fw-bold">Không tìm thấy sản phẩm nào khớp với từ khóa: "<strong>@ViewBag.SearchTerm</strong>"</span></p>
+                    <div class="mt-1">
+                        <div class="d-flex justify-content-center">
+                            <img src="~/Content/images/banner/search-empty.png" class="block img-fluid" />
+                        </div>
+                        <div class="text-center">
+                            <span class="fw-bold">Không tìm thấy sản phẩm!</span>
+                            <p>
+                                Vui lòng thay đổi tiêu chí tìm kiếm và thử lại, hoặc<br />
+                                truy cập Trang chủ để xem sản phẩm phổ biến nhất<br />
+                                của chúng tôi!
+                            </p>
+                        </div>
+                        <div style="height: 100px"></div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="mt-2 text-left">
+                    <p><span class="fw-bold">Kết quả tìm kiếm cho: "@ViewBag.SearchTerm"</span></p>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end" id="sapXep" style="cursor: pointer; position: relative; z-index: 1;">
+                            <div class="fw-bold fs-6">
+                                <i class="bi bi-list"></i>
+                                Sắp xếp theo
+                                <i class="bi bi-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white shadow p-3 mb-3 bg-body rounded" id="hienThi" style="position: absolute; width: 300px; display: none; z-index: 10;">
+                            <span class="fw-bold ms-2">Sắp xếp theo</span>
+                            <div class="m-2">
+                                <div class="form-check m-2">
+                                    <input class="form-check-input rounded-circle" type="radio" name="sapXep" value="newest" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">Mới nhất</label>
+                                </div>
+                                <div class="form-check m-2">
+                                    <input class="form-check-input rounded-circle" type="radio" name="sapXep" value="price_asc" id="flexCheckChecked1">
+                                    <label class="form-check-label" for="flexCheckChecked1">Giá: Thấp đến cao</label>
+                                </div>
+                                <div class="form-check m-2">
+                                    <input class="form-check-input rounded-circle" type="radio" name="sapXep" value="price_desc" id="flexCheckChecked2">
+                                    <label class="form-check-label" for="flexCheckChecked2">Giá: Cao đến thấp</label>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            // Bắt sự kiện nhấn vào `sapXep`
+                            document.getElementById('sapXep').addEventListener('click', function () {
+                                const hienThi = document.getElementById('hienThi');
+                                const sapXep = document.getElementById('sapXep');
+
+                                // Lấy vị trí và chiều cao của `sapXep`
+                                const rect = sapXep.getBoundingClientRect();
+                                hienThi.style.top = `${rect.bottom + 5}px`;
+                                hienThi.style.left = `${rect.left + 310}px`;
+                                hienThi.style.display = hienThi.style.display === 'none' || hienThi.style.display === '' ? 'block' : 'none';
+                            });
+                            // Lắng nghe sự kiện thay đổi trên các radio button
+                            document.querySelectorAll('input[name="sapXep"]').forEach((radio) => {
+                                radio.addEventListener('change', function () {
+                                    const selectedSort = this.value; // Lấy giá trị sắp xếp đã chọn
+                                    const searchTerm = document.getElementById('searchTerm').value; // Lấy từ khóa tìm kiếm từ input
+
+                                    // Gửi yêu cầu AJAX
+                                    fetch(`@Url.Action("Search", "Home")?searchTerm=${encodeURIComponent(searchTerm)}&sort=${encodeURIComponent(selectedSort)}&page=1`, {
+                                        method: 'GET',
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest', // Để server nhận biết đây là yêu cầu AJAX
+                                        },
+                                    })
+                                    .then((response) => response.text())
+                                    .then((html) => {
+                                        // Cập nhật danh sách sản phẩm
+                                        document.getElementById('productList').innerHTML = html;
+                                    })
+                                    .catch((error) => console.error('Error:', error));
+                                });
+                            });
+
+                        </script>
+                    </div>
+
+                </div>
+                <div class="row mt-4" id="productList">
+                    @Html.Partial("_ClothesList", Model)
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

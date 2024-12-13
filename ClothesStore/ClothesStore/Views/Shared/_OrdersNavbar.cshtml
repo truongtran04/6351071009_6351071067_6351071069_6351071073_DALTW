@@ -1,0 +1,131 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <meta charset="utf-8" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/css/LayoutHome.css" rel="stylesheet" />
+    <link href="~/Content/css/Main.css" rel="stylesheet" />
+    <link href="~/Content/css/Navbar.css" rel="stylesheet" />
+    <link href="~/Content/css/Reposive.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <style>
+        .checkout-progress-bar {
+            width: 500px;
+            display: flex;
+            justify-content: space-between;
+            list-style: none;
+            padding: 0;
+            padding-top: 20px;
+            position: relative; /* Để đường gạch nằm đúng vị trí */
+        }
+
+        .checkout-progress-bar-item {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+            .checkout-progress-bar-item .step {
+                display: inline-block;
+                background-color: #e9ecef;
+                color: #6c757d;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                line-height: 30px;
+                margin-bottom: 5px;
+                transition: background-color 0.3s, color 0.3s;
+                font-weight: bold;
+                position: relative; /* Để tạo khoảng cách giữa ô và đường gạch */
+                z-index: 1; /* Đặt số lên trên đường gạch */
+            }
+
+            .checkout-progress-bar-item.current .step {
+                background-color: #b2d3ff;
+                color: #007bff;
+            }
+
+            /* Đường gạch ngang giữa các bước */
+            .checkout-progress-bar-item:after {
+                content: "";
+                position: absolute;
+                height: 2px;
+                background: #007bff;
+                top: 15px;
+                left: 100%; /* Bắt đầu từ bên phải */
+                right: 0;
+                z-index: 0; /* Đặt xuống dưới */
+            }
+
+            .checkout-progress-bar-item:last-child:after {
+                content: none; /* Không có đường gạch cho bước cuối cùng */
+            }
+
+            /* Để đảm bảo các bước được căn giữa */
+            .checkout-progress-bar-item.active .step,
+            .checkout-progress-bar-item.current .step {
+                background-color: #007bff; /* Màu xanh cho bước hiện tại */
+                color: white;
+            }
+
+            /* Hiệu ứng hover cho các bước */
+            .checkout-progress-bar-item:hover .step {
+                background-color: #0056b3; /* Màu khi hover */
+                color: white;
+            }
+    </style>
+
+    <header class="header bg-white fixed-top">
+        <div class="container p-0">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <a class="navbar-brand ms-3" href="/Home/Index">
+                        <img src="~/Content/images/logo_2.png" alt="Logo" style="height: 40px;">
+                    </a>
+                    <ul class="checkout-progress-bar">
+                        <li class="checkout-progress-bar-item active">
+                            <span class="step">1</span>
+                            <span>Giỏ hàng</span>
+                        </li>
+                        <li class="checkout-progress-bar-item current">
+                            <span class="step">2</span>
+                            <span>Thanh toán</span>
+                        </li>
+                        <li class="checkout-progress-bar-item">
+                            <span class="step">3</span>
+                            <span>Hoàn tất</span>
+                        </li>
+                    </ul>
+                    <a class="nav-link me-3" href="@Url.Action("Index", "Home")" style="text-decoration: underline; font-weight: bold;">Tiếp tục mua hàng</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <script>
+    $(document).ready(function () {
+        // Kiểm tra xem thanh toán đã thành công hay chưa
+        var isPaymentSuccess = '@ViewBag.IsPaymentSuccess'; // Lấy thông tin từ ViewBag
+
+        if (isPaymentSuccess === 'True') {
+            // Nếu thanh toán thành công, thêm lớp "current" vào bước "Hoàn tất"
+            $('.checkout-progress-bar-item').eq(2).addClass('current');  // Bước 3 "Hoàn tất"
+        }
+    });
+    </script>
+
+    <main class="bg-light" style="height: auto; margin-top:50px;">
+        @RenderBody()
+    </main>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

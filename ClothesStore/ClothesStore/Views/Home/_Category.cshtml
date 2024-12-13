@@ -1,0 +1,10 @@
+﻿@model IEnumerable<ClothesStore.Models.Category>
+
+@foreach (var category in Model)
+{
+    <li class="nav-item">
+        <a href="@Url.Action("GetClothesByCate", "Clothes", new { categoryId = category.CategoryID})" class="nav-link text-uppercase fw-bold pb-2 hover-item">
+            <span>@category.CategoryName</span> <!-- Display category name -->
+        </a>
+    </li>
+}

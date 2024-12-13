@@ -1,0 +1,63 @@
+﻿@model ClothesStore.Models.Cloth
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Label = "Quần áo";
+    ViewBag.FucLabel = "Xóa quần áo";
+}
+
+
+<section class="content">
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <div class="welcome-text">
+                    <h3 class="card-title">
+                        <strong>@ViewBag.FucLabel</strong>
+                    </h3>
+                </div>
+            </div>
+            <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+                <a href="@Url.Action("Index", "Clothes")" class="btn btn-primary">
+                    Quay lại
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table display p-0 m-0" style="min-width: 845px;">
+                    <thead>
+                        <tr>
+                            <th>.#</th>
+                            <th>Mã quần áo</th>
+                            <th>Hình ảnh</th>
+                            <th>Tên quần áo</th>
+                            <th>Giá</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <img src="~/Content/images/clothes/@Model.MainImage" class="img-fluid" style="width: 80px" />
+                            </td>
+                            <td>@Html.DisplayFor(model => model.ClothesID)</td>
+                            <td>@Html.DisplayFor(model => model.ClothesName)</td>
+                            <td>@Html.DisplayFor(model => model.Price)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-actions no-color">
+                    <input type="submit" value="Delete" class="btn btn-danger" />
+                </div>
+            }
+        </div>
+    </div>
+</section>

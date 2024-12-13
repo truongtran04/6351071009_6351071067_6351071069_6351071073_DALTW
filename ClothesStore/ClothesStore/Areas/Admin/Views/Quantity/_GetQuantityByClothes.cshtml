@@ -1,0 +1,57 @@
+﻿@model IEnumerable<ClothesStore.Models.Clothes_Color_Size>
+@{
+    var clothesID = ViewBag.ClothesID;
+}
+<section class="content">
+    @Html.Partial("_Messages")
+    <div class="card">
+        <div class="card-header border-bottom p-0 p-3 mx-1">
+            <div class="col-sm-6 p-md-0">
+                <a href="@Url.Action("Create", "Quantity", new { idClothes = clothesID })" class="btn btn-success mr-2">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                    <span class="ml-1">Thêm mới</span>
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-responsive-sm">
+                    <thead>
+                        <tr>
+                            <th style="width: 10px">.#</th>
+                            <th>Màu sắc</th>
+                            <th>Kích cỡ</th>
+                            <th>Số lượng</th>
+                            <th>Chức năng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td></td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Color.ColorName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Size.SizeName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Quantity)
+                                </td>
+
+                                <td>
+                                    <a href="#" class="btn btn-success disabled"><i class="fa fa-toggle-on" aria-hidden="true"></i></a>
+                                    <a href="@Url.Action("Edit", "Quantity", new { sizeId = item.SizeID, colorId = item.ColorID, clothesId = item.ClothesID })" class="btn btn-success">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                        <span>Sửa</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

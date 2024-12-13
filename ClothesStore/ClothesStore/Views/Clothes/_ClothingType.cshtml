@@ -1,0 +1,16 @@
+﻿@model IEnumerable<ClothesStore.Models.Category_ClothingType>
+
+<ul class="list-unstyled">
+    @foreach (var item in Model)
+    {
+        <li>
+            <a href="@Url.Action("GetClothesByType", "Clothes", new { idCate = item.CategoryID,  idType = item.ClothingTypeID})"
+               class="item-link"
+               data-section="Danh mục sản phẩm"
+               data-item="@item.ClothingType.ClothingTypeName">
+                @item.ClothingType.ClothingTypeName
+            </a>
+        </li>
+    }
+</ul>
+
